@@ -13,12 +13,12 @@
 
 <table>
   <tr>
-    <td><img src="images/Regie eclairage.jpeg" alt="Image sans pollution" width="500"></td>
-    <td><img src="documentation/images/Magic_Air.png" alt="Logo Magic Air" width="210"></td>
+    <td><img src="images/Regie eclairage.jpeg" alt="Régie d'éclairage" width="500"></td>
+    <!-- <td><img src="documentation/images/Magic_Air.png" alt="Images de carte Wi-Fi - DMX" width="210"></td> -->
   </tr>
 </table>
 
-Le projet **Magic Air** vise à concevoir un prototype de mesure de la qualité de l'air à l'aide d'un circuit imprimé. Le prototype présenté repose sur une carte perforée et plusieurs connecteurs.
+Le projet **ArtNet - Module Wi-Fi DMX** vise à concevoir une carte electronique permetant de commander des équipement sur un réseau DMX grace au Wi-Fi.
 
 ### Matériel utilisé
 

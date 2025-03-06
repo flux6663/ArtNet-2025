@@ -146,15 +146,11 @@ Voici un tableau des broches utilisées, leur configuration, et les composants a
 
 Avec VCC = 5V
 
-\[
-R = \frac{VCC - Vf}{If} = \frac{5 - 1.2}{20 \times 10^{-3}} = 190\Omega
-\]
+$\R = \frac{VCC - Vf}{If} = \frac{5 - 1.2}{20 \times 10^{-3}} = 190\Omega$
 
 Avec VCC = 3.3V
 
-\[
-R = \frac{VCC - Vf}{If} = \frac{3.3 - 1.2}{20 \times 10^{-3}} = 105 \Omega
-\]
+$\R = \frac{VCC - Vf}{If} = \frac{3.3 - 1.2}{20 \times 10^{-3}} = 105 \Omega$
 
 #### Exemple d'implementation des composants
 

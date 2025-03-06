@@ -5,12 +5,6 @@
 
 </br>
 
-- [Synoptique](#synoptique)
-- [Installation et Configuration](#installation-et-configuration)
-- [Revue Technique](#revue-technique)
-
-</br>
-
 <table>
   <tr>
     <td><img src="images/Regie eclairage.jpeg" alt="Régie d'éclairage" width="500"></td>
@@ -18,31 +12,71 @@
   </tr>
 </table>
 
+</br>
+
+- [Synoptique](#synoptique)
+- [Installation et Configuration](#installation-et-configuration)
+- [Revue Technique](#revue-technique)
+
 Le projet **ArtNet - Module Wi-Fi DMX** vise à concevoir une carte electronique permetant de commander des équipement sur un réseau DMX grace au Wi-Fi.
 
 ### Matériel utilisé
 
-- LED rouge / bleu
-- Écran OLED 128x64 I2C
-- Capteur SGP40
-- Capteur DHT22
+- Seeed Studio XIAO ESP32C3
+- THVD1429DR
+- LTV-817
+- NC3MAH-LR
+- LED Rouge / Verte
+- Bouton
 
 ### Logiciels utilisés
 
 - Visual Studio Code
 - PlatformIO
+- Proteus 8.3
 
 ## Synoptique
 
 ### Schéma d'utilisation
 
-<img src="documentation/images/Synoptique.jpg" alt="Synoptique" width="694">
+<img src="images/Synoptique Module-WIFI.jpg" alt="Synoptique" width="694">
+
+### Diagramme d'exigence
+
+<img src="images/Diagramme-Exigence.jpg" alt="Synoptique" width="694">
 
 ## Revue Technique
 
+### Tableau comparatif des microcontroleurs
+
+| Microcontrôleur       | Raspberry Pi Pico W | Seeed Studio XIAO ESP32-C3 | Arduino Nano RP2040 | Arduino UNO R4 WiFi |
+|------------------------|--------------------|---------------------------|---------------------|--------------------|
+| **Image**             | <img src="https://fr.farnell.com/productimages/large/en_GB/3996082-40.jpg" alt="Synoptique" width="200"> | <img src="https://m.media-amazon.com/images/I/41aAv7b80cL._AC_UF1000,1000_QL80_.jpg" alt="Synoptique" width="250"> | <img src="https://cdn1.botland.com.pl/95029-pdt_540/arduino-nano-rp2040-connect-abx00052.jpg" alt="Synoptique" width="190"> | <img src="https://m.media-amazon.com/images/I/614tXIQWSRL.jpg" alt="Synoptique" width="290"> |
+| **Processeur**        | RP2040 (dual-core Cortex-M0+) @ 133 MHz | ESP32-C3 (RISC-V) @ 160 MHz | RP2040 (dual-core Cortex-M0+) @ 133 MHz | RA4M1 (Cortex-M4) @ 48 MHz |
+| **Mémoire Flash**     | 2 Mo | 4 Mo | 16 Mo | 256 Ko |
+| **RAM**              | 264 Ko | 400 Ko | 264 Ko | 32 Ko |
+| **Connectivité**     | Wi-Fi (2,4 GHz), Bluetooth 5.2 | Wi-Fi (2,4 GHz), Bluetooth 5.0 | Aucune | Wi-Fi (ESP32-S3) |
+| **GPIO**             | 26 | 11 | 20 | 14 |
+| **Tension de fonctionnement** | 3.3V | 3.3V | 3.3V | 5V |
+| **Port USB**        | USB-C | USB-C | USB-C | USB-C |
+| **ADC**              | 3 canaux (12 bits) | 4 canaux (12 bits) | 3 canaux (12 bits) | 6 canaux (14 bits) |
+| **DAC**              | Non | Oui (1 canal) | Non | Oui (1 canal) |
+| **PWM**              | 16 canaux | 5 canaux | 16 canaux | 6 canaux |
+| **UART**             | 2 | 2 | 2 | 1 |
+| **SPI**              | 2 | 1 | 2 | 1 |
+| **I2C**              | 2 | 1 | 2 | 1 |
+| **Consommation**     | Faible | Très faible | Faible | Moyenne |
+| **Prix Approx.**     | ~6-8€ | ~6-10€ | ~10-12€ | ~20-25€ |
+
+### Choix du microcontroleur
+
+TODO
+
 ### Brochage des Pins
 
-<img src="documentation/images/WeMos_D1_Mini_Pinout.png" alt="Brochage WeMos D1 Mini" width="400">
+<img src="https://files.seeedstudio.com/wiki/XIAO_WiFi/pin_map-2.png" alt="Brochage Seeed Studio XIAO ESP32C3" width="400">
+
+[Voir le Wiki seed studio](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/)
 
 ### Affectation des Entreés/Sorties
 
@@ -51,27 +85,70 @@ Voici un tableau des broches utilisées, leur configuration, et les composants a
 | **Broches** | **Fonction**  | **Désignation**        | **Composants / Structure**       | **Configuration** |
 |-------------|---------------|------------------------|-----------------------------------|--------------------------------------------|
 | IO4         |               | SW1                   | Sélecteur de tête                | Entrée + pull-up interne                   |
-| IO12         |               | SW2                   | Sélecteur d'anneau               | Entrée + pull-up interne                   |
-| IO12        |               | D1                    | LED Rouge                        | Sortie                                     |
-| IO33        |               | D2                    | LED Bleu                         | Sortie                                     |
-| IO27        |               | U2                    | DHT22                            | Bus                                        |
-| IO2        |               | GRB1, GRB2            | LEDs WS2812B                     | Bus                                        |
-| IO21        | SDA (I2C)     | U3 / U4               | OLED 128x64, SGP40               | I2C                                        |
-| IO22        | SCL (I2C)     | U3 / U4               | OLED 128x64, SGP40               | I2C                                        |
 
 ### Tableau de consomation
 
 | Composant    | Consommation (mA) | Nombre | Consommation totale (mA) |
 |--------------|-------------------|--------|--------------------------|
-| ESP32        | 500               | 1      | 500                      |
-| WS2812b      | 36,8              | 24     | 883,2                    |
-| LED Bleu     | 20                | 1      | 20                       |
-| LED Rouge    | 20                | 1      | 20                       |
-| DHT22        | 1,5               | 1      | 1,5                      |
-| OLED 128x64  | 22                | 1      | 22                       |
-| SGP40        | 4                 | 1      | 4                        |
+| ESP32 C3     | 74                | 1      | 74                       |
+| LTV-817      | 20                | 3      | 60                       |
+| THVD1429DR   | 60                | 1      | 60                       |
+| LED XLR      | 20                | 2      | 40                       |
 |              |                   |        |                          |
-| **Totale (A)** |                   |        | **1,45**                 |
+| **Totale (A)** |                   |        | **234 mA**                 |
+
+---
+
+### Interface DMX-512 (RS-485)
+
+#### 🔹 Niveaux de tension recommandés pour le DMX-512 (RS-485)
+
+- **DMX-512 utilise un signal différentiel (RS-485)** entre **DATA+ (A)** et **DATA- (B)**.
+- **Seuil minimum** : ±200 mV pour un signal valide.
+- **État logique défini** :
+  - **"1" (Mark) = DATA+ > DATA-**
+  - **"0" (Space) = DATA+ < DATA-**
+  - **Bus au repos ≈ 2.5V sur A et B (failsafe = logique "1")**.
+
+<br>
+
+<img src="images/Trame RS-485.png" alt="Synoptique" width="500">
+
+<br>
+
+> [!IMPORTANT]  
+> 🔧 Bonnes pratiques pour une interface DMX-512 fiable
+>
+> ✔ **Alimentation en 5V** pour respecter les normes DMX.  
+> ✔ **Utiliser un câblage torsadé** (ex. **Belden 9842**).  
+> ✔ **Ajouter des résistances de terminaison 120 Ω** aux extrémités.  
+> ✔ **Limiter le nombre de périphériques** (32 standard, 256 avec transceivers 1/8 UL).  
+
+#### 🔍 Comparaison rapide des transceivers RS-485  
+
+| Caractéristique      | SN65LBC184          | THVD1429DR        | MAX485           |
+|----------------------|--------------------|--------------------|------------------|
+| **Alimentation (Vcc)** | 4.75V - 5.25V | 3V - 5.5V | 4.75V - 5.25V |
+| **Vitesse max** | 2.5 Mbps | **20 Mbps** | 2.5 Mbps |
+| **Conso en veille** | 1.3 mA | **2 µA** | 120 µA |
+| **Protection ESD** | ±12 kV | **±16 kV** | ±15 kV |
+| **Failsafe intégré** | ✅ Oui | ✅ Oui | ❌ Non |
+| **Charge Unitaire (UL)** | **1/8 UL** | **1/8 UL** | 1/4 UL |
+| **Température max** | 85°C | **125°C** | 70°C |
+
+#### Protection contre les decharges electrostatique
+
+<img src="images/ESD Protection.png" alt="Protection ESD" width="400">
+
+#### Isolation galvanique entre le Microcontroleur et l'interface RS-485
+
+<img src="images/Interface Opto.png" alt="Protection ESD" width="400">
+
+#### Exemple d'implementation des composants
+
+<img src="images/Implementation.png" alt="Protection ESD" width="400">
+
+---
 
 ### Schéma structurel
 

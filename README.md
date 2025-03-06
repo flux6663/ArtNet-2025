@@ -70,7 +70,20 @@ Le projet **ArtNet - Module Wi-Fi DMX** vise à concevoir une carte electronique
 
 ### Choix du microcontroleur
 
-TODO
+kkk
+
+### Configuration de PlatformeIO
+
+Fichier `platformio.ini` pour Seeed XIAO ESP32C3
+
+```ini
+[env:seeed_xiao_esp32c3]
+platform = espressif32
+board = seeed_xiao_esp32c3
+board_build.mcu = esp32c3
+board_build.f_cpu = 160000000L
+framework = arduino
+```
 
 ### Brochage des Pins
 
@@ -144,13 +157,21 @@ Voici un tableau des broches utilisées, leur configuration, et les composants a
 
 <img src="images/Interface Opto.png" alt="Protection ESD" width="400">
 
-Avec VCC = 5V
+Calcule de la valeur de résistance pour les optocoupleurs
 
-$\R = \frac{VCC - Vf}{If} = \frac{5 - 1.2}{20 \times 10^{-3}} = 190\Omega$
+- Avec VCC = 5V
 
-Avec VCC = 3.3V
+  $R = \frac{VCC - Vf}{If} = \frac{5 - 1.2}{20 \times 10^{-3}} = 190 \Omega$  
+  R : E12, $180\Omega$ , ±10%, ¼W, à film métallique
 
-$\R = \frac{VCC - Vf}{If} = \frac{3.3 - 1.2}{20 \times 10^{-3}} = 105 \Omega$
+- Avec VCC = 3.3V  
+
+  $R = \frac{VCC - Vf}{If} = \frac{3.3 - 1.2}{20 \times 10^{-3}} = 105 \Omega$  
+  R : E12, $100\Omega$ , ±10%, ¼W, à film métallique
+
+- Résistance de tirage
+
+  R : E12, $10k\Omega$ , ±10%, ¼W, à film métallique
 
 #### Exemple d'implementation des composants
 

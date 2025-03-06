@@ -144,6 +144,18 @@ Voici un tableau des broches utilisées, leur configuration, et les composants a
 
 <img src="images/Interface Opto.png" alt="Protection ESD" width="400">
 
+Avec VCC = 5V
+
+\[
+R = \frac{VCC - Vf}{If} = \frac{5 - 1.2}{20 \times 10^{-3}} = 190\Omega
+\]
+
+Avec VCC = 3.3V
+
+\[
+R = \frac{VCC - Vf}{If} = \frac{3.3 - 1.2}{20 \times 10^{-3}} = 105 \Omega
+\]
+
 #### Exemple d'implementation des composants
 
 <img src="images/Implementation.png" alt="Protection ESD" width="400">
@@ -179,4 +191,4 @@ Voici un tableau des broches utilisées, leur configuration, et les composants a
 | [OLED 128x64](documentation/datasheet/Oled%20128-64.pdf) | Afficheur OLED I2C (128x64 pixels)                |
 | [l7805](documentation/datasheet/l7805.pdf) | Régulateur de tension 5V 1A   |
 
-&copy; 2024 La Salle Avignon - Magic Air - MARTIN Mathis
+&copy; 2025 La Salle Avignon - ArtNet - MARTIN Mathis

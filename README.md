@@ -185,9 +185,17 @@ Calcule de la valeur de résistance pour les optocoupleurs
 
 #### Validation de la communication en DMX 512 avec un projecteur par 56
 
-Pour commander le projecteur par 56, nous avons utiliser un shield entre notre ESP32 et le projecteur.
+Pour commander le projecteur par 56, nous avons utiliser un shield entre l'ESP32 et le projecteur.
 
 <img src="images/Interface DMX-512.png" alt="Interface DMX-12" width="120">
+
+pour la partie programmation, la librairie "esp_dmx" a été utiliser.
+
+un code permetant de changer la couleur du spot de rouge a vert puis bleu.
+
+``` cpp
+
+```
 
 ---
 

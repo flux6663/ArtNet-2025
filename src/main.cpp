@@ -1,9 +1,12 @@
 #include <Arduino.h>
+#include "wifimqtt.h"
 #include "DMXInterface.h"
 
 void setup()
 {
   Serial.begin(115200);
+  initialiserWiFi();
+  initialiserMQTT();
   initialiserDMX();
 }
 

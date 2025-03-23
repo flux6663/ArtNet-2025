@@ -10,6 +10,6 @@
 #define PORT_DMX DMX_NUM_1
 
 void initialiserDMX(uint8_t numeroPortDMX = PORT_DMX, uint8_t pinTranmissionDMX = DMX_TX_PIN, uint8_t pinReceptionDMX = DMX_RX_PIN, uint8_t pinRTS_DMX = DMX_RTS_PIN);
-void changerCanal(uint16_t canalDMX, uint8_t valeurCanal);
+void transmissionCanauxDmx(const void *canaux);
 
 #endif

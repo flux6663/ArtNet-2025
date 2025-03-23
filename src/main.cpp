@@ -34,20 +34,11 @@ void mqttVersDmx() {
 
 }
 
-void transmissionCanauxDmx() {
-
-  for (uint16_t i = 0; i < DMX_PACKET_SIZE; i++)
-  {
-    changerCanal(i, canauxDmx[i]);
-  }
-  
-}
-
 void loop()
 {
 
   receptionDataMQTT();
   mqttVersDmx();
-  transmissionCanauxDmx();
+  transmissionCanauxDmx(canauxDmx);
 
 }

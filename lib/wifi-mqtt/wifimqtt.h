@@ -5,20 +5,23 @@
 #include "WiFi.h"
 #include "PubSubClient.h"
 
-#define WIFI_SSID "MaisonMartin"
-#define WIFI_MDP "7ffPvN70WwC3K"
+#define WIFI_SSID "artnet"
+#define WIFI_MDP "72645659"
 #define WIFI_CHANNEL 0
 
-#define MQTT_IP_BROKER "10.0.0.10"
+#define MQTT_IP_BROKER "192.168.1.102"
 #define MQTT_PORT 1883
-#define MQTT_USER "mqtt_home"
-#define MQTT_MDP "QTN6svRX%CLwgkH"
+#define MQTT_USER ""
+#define MQTT_MDP ""
 #define MQTT_TOPIC "artnet"
 
-class messageMQTT {
-    public:
-        String voirTopic();
-        String voirMessage();
+class messageMQTT
+{
+public:
+    String voirTopic();
+    String voirMessage();
+    bool nouveauMessageMQTT();
+    void resetMessageMQTT();
 };
 
 void initialiserWiFi(String ssid = WIFI_SSID, String password = WIFI_MDP);

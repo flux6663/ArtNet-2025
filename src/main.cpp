@@ -16,10 +16,10 @@ void setup()
   initialiserDMX();
 }
 
-void mqttVersDmx() {
+void conversionJson()
+{
+  static String old_message;
 
-  String old_message;
-  
   if (old_message != message.voirMessage())
   {
     deserializeJson(doc, message.voirMessage());
@@ -31,23 +31,15 @@ void mqttVersDmx() {
 
     old_message = message.voirMessage();
   }
-
-}
-
-void transmissionCanauxDmx() {
-
-  for (uint16_t i = 0; i < DMX_PACKET_SIZE; i++)
-  {
-    changerCanal(i, canauxDmx[i]);
-  }
-  
 }
 
 void loop()
 {
-
   receptionDataMQTT();
-  mqttVersDmx();
-  transmissionCanauxDmx();
-
+  if (message.nouveauMessageMQTT())
+  {
+    conversionJson();
+    envoyerCanaux(canauxDmx);
+    message.resetMessageMQTT();
+  }
 }

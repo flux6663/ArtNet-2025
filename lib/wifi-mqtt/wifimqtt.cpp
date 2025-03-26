@@ -3,18 +3,30 @@
 
 String _mqttTopic;
 String _mqttMessage;
+bool _receptionMQTT = false;
 
-String messageMQTT::voirTopic() {
+String messageMQTT::voirTopic()
+{
     return _mqttTopic;
 }
 
-String messageMQTT::voirMessage() {
+String messageMQTT::voirMessage()
+{
     return _mqttMessage;
+}
+
+bool messageMQTT::nouveauMessageMQTT()
+{
+    return _receptionMQTT;
+}
+
+void messageMQTT::resetMessageMQTT()
+{
+    _receptionMQTT = false;
 }
 
 WiFiClient connexionWiFi;
 PubSubClient clientMQTT(connexionWiFi);
-
 
 void initialiserWiFi(String ssid, String password)
 {
@@ -30,18 +42,18 @@ void initialiserWiFi(String ssid, String password)
 // Reception du message MQTT
 void callback(char *mqtt_topic, byte *payload, unsigned int length)
 {
-
     String message_mqtt = "";
 
     for (int i = 0; i < length; i++)
     {
-        Serial.print((char)payload[i]);
         message_mqtt += (char)payload[i];
     }
 
+    Serial.println(message_mqtt);
+
     _mqttTopic = mqtt_topic;
     _mqttMessage = message_mqtt;
-    
+    _receptionMQTT = true;
 }
 
 void initialiserMQTT(String mqtt_broker, uint16_t mqtt_port, String mqtt_username, String mqtt_password, String mqtt_topic)
@@ -65,18 +77,21 @@ void initialiserMQTT(String mqtt_broker, uint16_t mqtt_port, String mqtt_usernam
         }
     }
 
-    String topic = mqtt_topic + (String)"/";
+    String topic = mqtt_topic + (String) "/";
     String macAddress = WiFi.macAddress();
     String lastTwoChars = macAddress.substring(macAddress.length() - 2); // Récupère les deux derniers caractères
-    topic += lastTwoChars + (String)"/canauxDMX";
+    topic += lastTwoChars + (String) "/canauxDMX";
+
     clientMQTT.subscribe(topic.c_str());
     Serial.println(topic);
 }
 
-void envoyerDataMQTT(String mqtt_topic, String data) {
+void envoyerDataMQTT(String mqtt_topic, String data)
+{
     clientMQTT.publish(mqtt_topic.c_str(), data.c_str());
 }
 
-void receptionDataMQTT() {
+void receptionDataMQTT()
+{
     clientMQTT.loop();
 }

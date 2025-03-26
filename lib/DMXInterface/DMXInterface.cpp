@@ -16,13 +16,9 @@ void initialiserDMX(uint8_t numeroPortDMX, uint8_t pinTranmissionDMX, uint8_t pi
     dmx_set_pin(numeroPortDMX, pinTranmissionDMX, pinReceptionDMX, pinRTS_DMX);
 }
 
-void changerCanal(uint16_t canalDMX, uint8_t valeurCanal)
+void envoyerCanaux(const void *data)
 {
-    dmx_write_slot(PORT_DMX, canalDMX, valeurCanal);
+    dmx_write(PORT_DMX, data, DMX_PACKET_SIZE);
+    dmx_send_num(PORT_DMX, DMX_PACKET_SIZE);
     dmx_wait_sent(PORT_DMX, DMX_TIMEOUT_TICK);
-    dmx_send(PORT_DMX);
-
-    Serial.print(canalDMX);
-    Serial.print(": ");
-    Serial.println(valeurCanal);
 }

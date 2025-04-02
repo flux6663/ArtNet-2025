@@ -76,19 +76,36 @@ kkk
 Fichier `platformio.ini` pour Seeed XIAO ESP32C3
 
 ```ini
+[platformio]
+default_envs = seeed_xiao_esp32c3
+
+[common]
+monitor_speed = 115200
+lib_deps = 
+	someweisguy/esp_dmx@^4.1.0
+	knolleary/PubSubClient@^2.8
+	bblanchon/ArduinoJson@^7.3.1
+
 [env:seeed_xiao_esp32c3]
 platform = espressif32
 board = seeed_xiao_esp32c3
 board_build.mcu = esp32c3
 board_build.f_cpu = 160000000L
 framework = arduino
-lib_deps = someweisguy/esp_dmx@^4.1.0
+
+; Configuration du debug Jtag
+; upload_protocol = esp-builtin
+debug_tool = esp-builtin
+debug_server =
+  $PLATFORMIO_CORE_DIR/packages/tool-openocd-esp32/bin/openocd
+  -f
+  $PLATFORMIO_CORE_DIR/packages/tool-openocd-esp32/share/openocd/scripts/board/esp32c3-builtin.cfg 
+
 
 [env:esp32dev]
 platform = espressif32
 board = esp32dev
 framework = arduino
-lib_deps = someweisguy/esp_dmx@^4.1.0
 ```
 
 ### Brochage des Pins

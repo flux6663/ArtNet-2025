@@ -51,7 +51,6 @@ public:
 
 void initialiserWiFi(String ssid = WIFI_SSID, String password = WIFI_MDP);
 void initialiserMQTT(String mqtt_broker = MQTT_IP_BROKER, uint16_t mqtt_port = MQTT_PORT, String mqtt_username = MQTT_USER, String mqtt_password = MQTT_MDP);
-void envoyerDataMQTT(String mqtt_topic, String data);
 void sinscrireAuxTopic();
 
 

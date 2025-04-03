@@ -1,5 +1,6 @@
 #include "include/mqtt.h"
 #include <Arduino.h>
+#include <iostream>
 
 WiFiClient connexionWiFi;
 PubSubClient clientMQTT(connexionWiFi);
@@ -43,7 +44,7 @@ void MQTT::envoieConfiguration(int univers) {
 
     String topicEnvoieConfig = (String)MQTT_TOPIC_CONFIG_MODULE + (String)nomModuleWifi;
 
-    envoyerDataMQTT(topicEnvoieConfig, (String)univers);
+    envoyerMessage(topicEnvoieConfig, (String)univers);
 
 }
 
@@ -119,7 +120,7 @@ void sinscrireAuxTopic() {
 
 }
 
-void envoyerDataMQTT(String mqtt_topic, String data)
+void envoyerMessage(String mqtt_topic, String data)
 {
     clientMQTT.publish(mqtt_topic.c_str(), data.c_str());
 }

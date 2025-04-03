@@ -1,12 +1,8 @@
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include "wifimqtt.h"
 #include "DMXInterface.h"
 
-uint8_t canauxDmx[DMX_PACKET_SIZE];
-
-messageMQTT message;
-JsonDocument doc;
+MQTT transmissionMqtt;
 
 void setup()
 {
@@ -16,30 +12,14 @@ void setup()
   initialiserDMX();
 }
 
-void conversionJson()
-{
-  static String old_message;
-
-  if (old_message != message.voirMessage())
-  {
-    deserializeJson(doc, message.voirMessage());
-
-    for (uint16_t i = 0; i < DMX_PACKET_SIZE; i++)
-    {
-      canauxDmx[i] = doc[String("canal") + (String)i];
-    }
-
-    old_message = message.voirMessage();
-  }
-}
-
 void loop()
 {
-  receptionDataMQTT();
-  if (message.nouveauMessageMQTT())
+  transmissionMqtt.receptionDataMQTT();
+
+  if (transmissionMqtt.getFlag())
   {
-    conversionJson();
-    envoyerCanaux(canauxDmx);
-    message.resetMessageMQTT();
+    String message = transmissionMqtt.getMessage();
+    envoyerCanaux(message);
+    transmissionMqtt.setFlag(RESET_FLAG);
   }
 }

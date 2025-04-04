@@ -6,8 +6,6 @@
 
 uint8_t canauxDmx[DMX_PACKET_SIZE];
 
-JsonDocument json;
-
 void initialiserDMX(uint8_t numeroPortDMX, uint8_t pinTranmissionDMX, uint8_t pinReceptionDMX, uint8_t pinRTS_DMX)
 {
     dmx_config_t config = DMX_CONFIG_DEFAULT;
@@ -26,8 +24,10 @@ void conversionJson(String message)
   if (old_message != message)
   {
 
-    DynamicJsonDocument doc(256);
-    DeserializationError error = deserializeJson(doc, json);
+    int longeurMessage = message.length();
+
+    DynamicJsonDocument doc(longeurMessage);
+    DeserializationError error = deserializeJson(doc, message);
     
     if (error) {
       Serial.print("Erreur de parsing JSON: ");
@@ -38,6 +38,8 @@ void conversionJson(String message)
     for (JsonObject obj : doc.as<JsonArray>()) {
       int canal = obj["canal"];
       int valeur = obj["valeur"];
+
+      Serial.print("canal : " + (String)canal + ", valeur : " + (String) valeur);
 
       canauxDmx[canal] = valeur;
     }

@@ -37,7 +37,8 @@ public:
 protected:
     String _mqttTopic;
     String _mqttMessage;
-    bool _mqttFlag = false;
+    int _mqttLongeurMessage;
+    bool _mqttFlag = RESET_FLAG;
 
 };
 

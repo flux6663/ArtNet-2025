@@ -36,6 +36,11 @@ void communication::setFlag(bool mqttFlag)
     _mqttFlag = mqttFlag;
 }
 
+void envoyerMessage(String mqtt_topic, String data)
+{
+    clientMQTT.publish(mqtt_topic.c_str(), data.c_str());
+}
+
 void MQTT::envoieConfiguration(int univers) {
 
     String adressMac = WiFi.macAddress();
@@ -79,7 +84,7 @@ void nouveauMessageMQTT(char *mqttTopic, byte *payload, unsigned int nombreCarat
 
     Serial.println(messageMqtt);
 
-    reception.setMessage(mqttTopic);
+    reception.setTopic(mqttTopic);
     reception.setMessage(messageMqtt);
     reception.setFlag(NEW_FLAG);
 }
@@ -115,12 +120,7 @@ void sinscrireAuxTopic() {
 
     clientMQTT.subscribe(topicLectureCanaux.c_str());
 
-    Serial.println("Abonner au topic : ");
+    Serial.print("Abonner au topic : ");
     Serial.println(topicLectureCanaux);
 
-}
-
-void envoyerMessage(String mqtt_topic, String data)
-{
-    clientMQTT.publish(mqtt_topic.c_str(), data.c_str());
 }

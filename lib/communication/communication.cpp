@@ -1,46 +1,49 @@
-#include "include/mqtt.h"
+#include "communication.h"
 #include <Arduino.h>
+
+String _mqttTopic;
+String _mqttMessage;
+bool _mqttFlag = RESET_FLAG;
 
 WiFiClient connexionWiFi;
 PubSubClient clientMQTT(connexionWiFi);
-communication reception;
 
-String communication::getTopic()
+String Communication::getTopic()
 {
     return _mqttTopic;
 }
 
-void communication::setTopic(String mqttTopic)
+void Communication::setTopic(String mqttTopic)
 {
     _mqttTopic = mqttTopic;
 }
 
-String communication::getMessage()
+String Communication::getMessage()
 {
     return _mqttMessage;
 }
 
-void communication::setMessage(String mqttMessage)
+void Communication::setMessage(String mqttMessage)
 {
     _mqttMessage = mqttMessage;
 }
 
-bool communication::getFlag()
+bool Communication::getFlag()
 {
     return _mqttFlag;
 }
 
-void communication::setFlag(bool mqttFlag)
+void Communication::setFlag(bool mqttFlag)
 {
     _mqttFlag = mqttFlag;
 }
 
-void envoyerMessage(String mqtt_topic, String data)
+void Communication::envoyerMessage(String mqtt_topic, String data)
 {
     clientMQTT.publish(mqtt_topic.c_str(), data.c_str());
 }
 
-void MQTT::envoieConfiguration(int univers) {
+void Communication::envoieConfiguration(int univers) {
 
     String adressMac = WiFi.macAddress();
     String dernierNumeroAdressMac = adressMac.substring(adressMac.length() - 4);
@@ -48,11 +51,11 @@ void MQTT::envoieConfiguration(int univers) {
 
     String topicEnvoieConfig = (String)MQTT_TOPIC_CONFIG_MODULE + (String)nomModuleWifi;
 
-    envoyerMessage(topicEnvoieConfig, (String)univers);
+    this->envoyerMessage(topicEnvoieConfig, (String)univers);
 
 }
 
-void MQTT::receptionDataMQTT()
+void Communication::receptionDataMQTT()
 {
     // TODO faire la gestion de la reconnexion
     // if (!clientMQTT.connected()) {
@@ -61,7 +64,7 @@ void MQTT::receptionDataMQTT()
     clientMQTT.loop();
 }
 
-void initialiserWiFi(String ssid, String password)
+void Communication::initialiserWiFi(String ssid, String password)
 {
     WiFi.begin(ssid.c_str(), password.c_str());
     while (WiFi.status() != WL_CONNECTED)
@@ -72,25 +75,7 @@ void initialiserWiFi(String ssid, String password)
     Serial.println("module connecter au Wi-Fi");
 }
 
-void nouveauMessageMQTT(char *mqttTopic, byte *payload, unsigned int nombreCarathere)
-{
-    String messageMqtt = "";
-
-    for (int i = 0; i < nombreCarathere; i++)
-    {
-        messageMqtt += (char)payload[i]; 
-    }
-
-    Serial.println(messageMqtt);
-
-    reception.setFlag(true);
-    reception.setTopic(mqttTopic);
-    reception.setMessage(messageMqtt);
-
-    Serial.println("reception flag : " + (String)reception.getFlag());
-}
-
-void initialiserMQTT(String mqttBroker, uint16_t mqttPort, String mqttUsername, String mqttPassword)
+void Communication::initialiserMQTT(String mqttBroker, uint16_t mqttPort, String mqttUsername, String mqttPassword)
 {
 
     clientMQTT.setServer(mqttBroker.c_str(), mqttPort);
@@ -112,16 +97,32 @@ void initialiserMQTT(String mqttBroker, uint16_t mqttPort, String mqttUsername, 
         }
     }
 
-    sinscrireAuxTopic();
+    this->sinscrireAuxTopic();
 }
 
-void sinscrireAuxTopic() {
+void Communication::sinscrireAuxTopic() {
 
-    String topicLectureCanaux = (String)MQTT_TOPIC_ENVOIE_CANAUX + (String)"/" + (String)UNIVERS;
+    String topicLectureCanaux = (String)MQTT_TOPIC_RECEPTION_CANAUX;
 
     clientMQTT.subscribe(topicLectureCanaux.c_str());
 
     Serial.print("Abonner au topic : ");
     Serial.println(topicLectureCanaux);
 
+}
+
+void nouveauMessageMQTT(char *mqttTopic, byte *payload, unsigned int nombreCarathere)
+{
+    String messageMqtt = "";
+
+    for (int i = 0; i < nombreCarathere; i++)
+    {
+        messageMqtt += (char)payload[i]; 
+    }
+
+    Serial.println(messageMqtt);
+
+    _mqttFlag = NEW_FLAG;
+    _mqttTopic = mqttTopic;
+    _mqttMessage = messageMqtt;
 }

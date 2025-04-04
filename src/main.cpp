@@ -1,36 +1,34 @@
 #include <Arduino.h>
-#include "wifimqtt.h"
+#include "communication.h"
 #include "DMXInterface.h"
 
-MQTT transmissionMqtt;
+Communication transmission;
 
 void setup()
 {
   Serial.begin(115200);
-  initialiserWiFi();
-  initialiserMQTT();
+  transmission.initialiserWiFi();
+  transmission.initialiserMQTT();
   initialiserDMX();
 }
 
+
 void loop()
 {
-  transmissionMqtt.receptionDataMQTT();
+  transmission.receptionDataMQTT();
 
-  bool flag = transmissionMqtt.getFlag();
-  String topic = transmissionMqtt.getTopic();
-  String message = transmissionMqtt.getMessage();
+  bool flag = transmission.getFlag();
+  String topic = transmission.getTopic();
+  String message = transmission.getMessage();
 
-  Serial.println((String)flag);
-
-  if (flag == true)
+  if (flag == NEW_FLAG)
   {
 
-    // if (topic == (MQTT_TOPIC_ENVOIE_CANAUX + "/" + (String)UNIVERS))
-    // {
-    //   envoyerCanaux(message);
-    //   
-    // }
+    if (topic == (String)MQTT_TOPIC_RECEPTION_CANAUX)
+    {
+      envoyerCanaux(message);
+    }
 
-    transmissionMqtt.setFlag(false);
+    transmission.setFlag(RESET_FLAG);
   }
 }

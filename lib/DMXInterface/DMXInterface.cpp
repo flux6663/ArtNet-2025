@@ -39,7 +39,7 @@ void conversionJson(String message)
       int canal = obj["canal"];
       int valeur = obj["valeur"];
 
-      Serial.print("canal : " + (String)canal + ", valeur : " + (String) valeur);
+      Serial.println("canal : " + (String)canal + ", valeur : " + (String) valeur);
 
       canauxDmx[canal] = valeur;
     }

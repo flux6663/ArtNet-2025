@@ -16,13 +16,14 @@ void loop()
 {
   transmissionMqtt.receptionDataMQTT();
 
-  if (transmissionMqtt.getFlag())
-  {
-    String topic = transmissionMqtt.getTopic();
-    String message = transmissionMqtt.getMessage();
+  bool flag = transmissionMqtt.getFlag();
+  String topic = transmissionMqtt.getTopic();
+  String message = transmissionMqtt.getMessage();
 
-    Serial.println(topic);
-    Serial.println(message);
+  Serial.println((String)flag);
+
+  if (flag == true)
+  {
 
     // if (topic == (MQTT_TOPIC_ENVOIE_CANAUX + "/" + (String)UNIVERS))
     // {
@@ -30,6 +31,6 @@ void loop()
     //   
     // }
 
-    transmissionMqtt.setFlag(RESET_FLAG);
+    transmissionMqtt.setFlag(false);
   }
 }

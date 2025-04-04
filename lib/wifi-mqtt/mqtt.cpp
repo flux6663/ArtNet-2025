@@ -1,6 +1,5 @@
 #include "include/mqtt.h"
 #include <Arduino.h>
-#include <iostream>
 
 WiFiClient connexionWiFi;
 PubSubClient clientMQTT(connexionWiFi);
@@ -75,7 +74,7 @@ void initialiserWiFi(String ssid, String password)
 
 void nouveauMessageMQTT(char *mqttTopic, byte *payload, unsigned int nombreCarathere)
 {
-    String messageMqtt;
+    String messageMqtt = "";
 
     for (int i = 0; i < nombreCarathere; i++)
     {
@@ -84,9 +83,11 @@ void nouveauMessageMQTT(char *mqttTopic, byte *payload, unsigned int nombreCarat
 
     Serial.println(messageMqtt);
 
+    reception.setFlag(true);
     reception.setTopic(mqttTopic);
     reception.setMessage(messageMqtt);
-    reception.setFlag(NEW_FLAG);
+
+    Serial.println("reception flag : " + (String)reception.getFlag());
 }
 
 void initialiserMQTT(String mqttBroker, uint16_t mqttPort, String mqttUsername, String mqttPassword)

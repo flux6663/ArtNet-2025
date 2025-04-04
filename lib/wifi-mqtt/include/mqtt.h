@@ -5,14 +5,14 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 
-#define WIFI_SSID "artnet"
-#define WIFI_MDP "72645659"
+#define WIFI_SSID "MaisonMartin"
+#define WIFI_MDP "7ffPvN70WwC3K"
 #define WIFI_CHANNEL 0
 
-#define MQTT_IP_BROKER "192.168.1.103"
+#define MQTT_IP_BROKER "10.0.0.10"
 #define MQTT_PORT 1883
-#define MQTT_USER ""
-#define MQTT_MDP ""
+#define MQTT_USER "mqtt_home"
+#define MQTT_MDP "QTN6svRX%CLwgkH"
 
 #define MQTT_TOPIC_GENERALE "artnet/"
 #define MQTT_TOPIC_CONFIG_MODULE  (String)MQTT_TOPIC_GENERALE + (String)"config"
@@ -34,14 +34,12 @@ public:
     bool getFlag();
     void setFlag(bool mqttFlag);
 
-protected:
+private:
     String _mqttTopic;
     String _mqttMessage;
-    int _mqttLongeurMessage;
-    bool _mqttFlag = RESET_FLAG;
+    bool _mqttFlag = false;
 
 };
-
 
 class MQTT : public communication
 { 
@@ -53,6 +51,5 @@ public:
 void initialiserWiFi(String ssid = WIFI_SSID, String password = WIFI_MDP);
 void initialiserMQTT(String mqtt_broker = MQTT_IP_BROKER, uint16_t mqtt_port = MQTT_PORT, String mqtt_username = MQTT_USER, String mqtt_password = MQTT_MDP);
 void sinscrireAuxTopic();
-
 
 #endif

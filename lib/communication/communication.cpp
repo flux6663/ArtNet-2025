@@ -111,18 +111,25 @@ void Communication::sinscrireAuxTopic() {
 
 }
 
-void nouveauMessageMQTT(char *mqttTopic, byte *payload, unsigned int nombreCarathere)
+void nouveauMessageMQTT(char *mqttTopic, byte *mqttPayload, unsigned int nombreCarathere)
 {
-    String messageMqtt = "";
+    String message = "";
+    static String old_message;
 
     for (int i = 0; i < nombreCarathere; i++)
     {
-        messageMqtt += (char)payload[i]; 
+        message += (char)mqttPayload[i]; 
     }
 
-    Serial.println(messageMqtt);
+    if (old_message != message)
+    {
+        Serial.println(message);
 
-    _mqttFlag = NEW_FLAG;
-    _mqttTopic = mqttTopic;
-    _mqttMessage = messageMqtt;
+        _mqttFlag = NEW_FLAG;
+        _mqttTopic = mqttTopic;
+        _mqttMessage = message;
+
+        old_message = message;
+    }
+    
 }

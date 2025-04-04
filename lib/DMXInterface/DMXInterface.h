@@ -9,7 +9,16 @@
 #define DMX_RTS_PIN 2
 #define PORT_DMX DMX_NUM_1
 
-void initialiserDMX(uint8_t numeroPortDMX = PORT_DMX, uint8_t pinTranmissionDMX = DMX_TX_PIN, uint8_t pinReceptionDMX = DMX_RX_PIN, uint8_t pinRTS_DMX = DMX_RTS_PIN);
-void envoyerCanaux(String message);
+class Interface
+{
+    public:
+    void initialiser(uint8_t numeroPortDMX = PORT_DMX, uint8_t pinTranmissionDMX = DMX_TX_PIN, uint8_t pinReceptionDMX = DMX_RX_PIN, uint8_t pinRTS_DMX = DMX_RTS_PIN);
+    void envoyerCanaux(String message);
+
+    private:
+    void lireJson(String message);
+
+    uint8_t _canauxDmx[DMX_PACKET_SIZE];
+};
 
 #endif

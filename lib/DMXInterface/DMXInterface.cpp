@@ -4,9 +4,7 @@
 
 #define PERSONALITER_DMX 1
 
-uint8_t canauxDmx[DMX_PACKET_SIZE];
-
-void initialiserDMX(uint8_t numeroPortDMX, uint8_t pinTranmissionDMX, uint8_t pinReceptionDMX, uint8_t pinRTS_DMX)
+void Interface::initialiser(uint8_t numeroPortDMX, uint8_t pinTranmissionDMX, uint8_t pinReceptionDMX, uint8_t pinRTS_DMX)
 {
     dmx_config_t config = DMX_CONFIG_DEFAULT;
 
@@ -17,42 +15,34 @@ void initialiserDMX(uint8_t numeroPortDMX, uint8_t pinTranmissionDMX, uint8_t pi
     dmx_set_pin(numeroPortDMX, pinTranmissionDMX, pinReceptionDMX, pinRTS_DMX);
 }
 
-void conversionJson(String message)
+void Interface::lireJson(String message)
 {
-  static String old_message;
 
-  if (old_message != message)
-  {
-
-    int longeurMessage = message.length();
-
-    DynamicJsonDocument doc(longeurMessage);
-    DeserializationError error = deserializeJson(doc, message);
-    
-    if (error) {
-      Serial.print("Erreur de parsing JSON: ");
-      Serial.println(error.c_str());
-      return;
-    }
-    
-    for (JsonObject obj : doc.as<JsonArray>()) {
-      int canal = obj["canal"];
-      int valeur = obj["valeur"];
-
-      Serial.println("canal : " + (String)canal + ", valeur : " + (String) valeur);
-
-      canauxDmx[canal] = valeur;
-    }
-
-    old_message = message;
+  JsonDocument messageJson;
+  DeserializationError error = deserializeJson(messageJson, message);
+  
+  if (error) {
+    Serial.print("Erreur de parsing JSON: ");
+    Serial.println(error.c_str());
+    return;
   }
+  
+  for (JsonObject obj : messageJson.as<JsonArray>()) {
+    int canal = obj["canal"];
+    int valeur = obj["valeur"];
+
+    Serial.println("canal : " + (String)canal + ", valeur : " + (String) valeur);
+
+    _canauxDmx[canal] = valeur;
+  }
+
 }
 
-void envoyerCanaux(String message)
+void Interface::envoyerCanaux(String message)
 {
-  conversionJson(message);
+  this->lireJson(message);
 
-  dmx_write(PORT_DMX, canauxDmx, DMX_PACKET_SIZE);
+  dmx_write(PORT_DMX, _canauxDmx, DMX_PACKET_SIZE);
   dmx_wait_sent(PORT_DMX, DMX_TIMEOUT_TICK);
   dmx_send_num(PORT_DMX, DMX_PACKET_SIZE);
 }

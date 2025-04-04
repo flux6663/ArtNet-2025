@@ -3,18 +3,18 @@
 #include "DMXInterface.h"
 
 Communication transmission;
+Interface dmx;
 
 void setup()
 {
   Serial.begin(115200);
   transmission.initialiserWiFi();
   transmission.initialiserMQTT();
-  initialiserDMX();
+  dmx.initialiser();
 }
 
+void nouveauMessage() {
 
-void loop()
-{
   transmission.receptionDataMQTT();
 
   bool flag = transmission.getFlag();
@@ -26,9 +26,15 @@ void loop()
 
     if (topic == (String)MQTT_TOPIC_RECEPTION_CANAUX)
     {
-      envoyerCanaux(message);
+      dmx.envoyerCanaux(message);
     }
 
     transmission.setFlag(RESET_FLAG);
   }
+
+}
+
+void loop()
+{
+  nouveauMessage();
 }

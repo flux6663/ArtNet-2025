@@ -76,6 +76,7 @@ kkk
 Fichier `platformio.ini` pour Seeed XIAO ESP32C3
 
 ```ini
+; selectioner l'environement voulue
 [platformio]
 default_envs = seeed_xiao_esp32c3
 
@@ -92,15 +93,6 @@ board = seeed_xiao_esp32c3
 board_build.mcu = esp32c3
 board_build.f_cpu = 160000000L
 framework = arduino
-
-; Configuration du debug Jtag
-; upload_protocol = esp-builtin
-debug_tool = esp-builtin
-debug_server =
-  $PLATFORMIO_CORE_DIR/packages/tool-openocd-esp32/bin/openocd
-  -f
-  $PLATFORMIO_CORE_DIR/packages/tool-openocd-esp32/share/openocd/scripts/board/esp32c3-builtin.cfg 
-
 
 [env:esp32dev]
 platform = espressif32
@@ -220,7 +212,7 @@ un code permetant de changer la couleur du spot de rouge a vert puis bleu.
 
 <img src="documentation/images/Schema_structurel.png" alt="Schéma structurel" width="400">
 
-[Voir le schéma structurel](documentation/Schéma%20structurel%20Magic%20Air.pdf)
+[Voir le schéma structurel]([documentation/Schéma%20structurel%20Magic%20Air.pdf](https://drive.google.com/file/d/14fQQeiAX1P91fE9i7GWyYnOiAEXLKIbo/view?usp=drive_link))
 
 ### Nomenclature (BOM)
 
@@ -232,7 +224,7 @@ un code permetant de changer la couleur du spot de rouge a vert puis bleu.
 
 <img src="documentation/images/Bill_of_materials.png" alt="Devis de la carte" width="400">
 
-[Voir le devis](documentation/Devis%20Magic%20Air.pdf)
+[Voir le devis]([documentation/Devis%20Magic%20Air.pdf](https://drive.google.com/file/d/12X9w5mhPE3-XjVhsdZISE62wrRXizDG-/view?usp=drive_link))
 
 ### Liste des composants principaux
 

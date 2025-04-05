@@ -66,6 +66,7 @@ void Communication::receptionDataMQTT()
 
 void Communication::initialiserWiFi(String ssid, String password)
 {
+    WiFi.mode(WIFI_MODE_STA);
     WiFi.begin(ssid.c_str(), password.c_str());
     while (WiFi.status() != WL_CONNECTED)
     {

@@ -5,6 +5,7 @@ function bouttonConnexion(event) {
     const ssid = document.querySelector('input[name="wifi_ssid"]').value.trim();
     const wifiMdp = document.querySelector('input[name="wifi_mdp"]').value.trim();
     const mqttIp = document.querySelector('input[name="mqtt_ip"]').value.trim();
+    const mqttPort = document.querySelector('input[name="mqtt_port"]').value.trim();
     const mqttUser = document.querySelector('input[name="mqtt_user"]').value.trim();
     const mqttMdp = document.querySelector('input[name="mqtt_mdp"]').value.trim();
     const univers = document.querySelector('input[name="univers"]').value.trim();
@@ -23,7 +24,7 @@ function bouttonConnexion(event) {
     }
 
     // Construit l'URL de la requête
-    const url = `/config?wifi_ssid=${encodeURIComponent(ssid)}&wifi_mdp=${encodeURIComponent(wifiMdp)}&mqtt_ip=${encodeURIComponent(mqttIp)}&mqtt_user=${encodeURIComponent(mqttUser)}&mqtt_mdp=${encodeURIComponent(mqttMdp)}&univers=${encodeURIComponent(univers)}`;
+    const url = `/config?wifi_ssid=${encodeURIComponent(ssid)}&wifi_mdp=${encodeURIComponent(wifiMdp)}&mqtt_ip=${encodeURIComponent(mqttIp)}&mqtt_port=${encodeURIComponent(mqttPort)}&mqtt_user=${encodeURIComponent(mqttUser)}&mqtt_mdp=${encodeURIComponent(mqttMdp)}&univers=${encodeURIComponent(univers)}`;
 
     // Envoie la requête au serveur ESP32
     var xhttp = new XMLHttpRequest();

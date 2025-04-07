@@ -1,8 +1,6 @@
 #include "configuration.h"
 #include <Arduino.h>
 
-unsigned long tempsAppuisBouton = 0;
-
 AsyncWebServer serverWeb(PORT_SERVEUR_WEB);
 Preferences memoire;
 
@@ -19,6 +17,8 @@ void resetConfiguration() {
   memoire.remove(CLE_MEMOIRE_UNIVERS);
   memoire.end();
 
+  delay(1000);
+
   ESP.restart();
 }
 
@@ -28,8 +28,10 @@ void IRAM_ATTR appuisBoutonReset() {
 
   tempsCourant = millis();
   if((tempsCourant - nouveauTemps) > TEMPS_REBONS) {
-    resetConfiguration();
     nouveauTemps = tempsCourant;
+
+    resetConfiguration();
+
   }
 }
 
@@ -75,6 +77,15 @@ void Configuration::lireMemoire() {
   memoire.end();
 }
 
+String Configuration::getNameModuleWifi()
+{
+  String adressMac = WiFi.macAddress();
+  String dernierNumeroAdressMac = adressMac.substring(adressMac.length() - 5);
+  dernierNumeroAdressMac.replace(":", "");
+  _nomModuleWifi = "Module-" + dernierNumeroAdressMac;
+  return _nomModuleWifi;
+}
+
 void Configuration::creationServeurWeb() {
 
   this->creationPointAcces();
@@ -116,6 +127,8 @@ void Configuration::creationServeurWeb() {
     memoire.putInt(CLE_MEMOIRE_UNIVERS, univers.toInt());
     memoire.end();
 
+    Serial.println("Nouvelle valeur de configuration recue !");
+
     Serial.print("ssid : ");
     Serial.println(ssid);
     Serial.print("mdp : ");
@@ -144,13 +157,8 @@ void Configuration::creationServeurWeb() {
 }
 
 void Configuration::creationPointAcces() {
-
-  String adressMac = WiFi.macAddress();
-  String dernierNumeroAdressMac = adressMac.substring(adressMac.length() - 4);
-  String pointAccesSsid = POINT_ACCES_SSID + (String)dernierNumeroAdressMac;
-
   WiFi.mode(WIFI_MODE_AP);
-  WiFi.softAP(pointAccesSsid, POINT_ACCES_MDP);
+  WiFi.softAP(_nomModuleWifi, POINT_ACCES_MDP);
 }
 
 bool Configuration::configurationSauvegarder() {

@@ -41,10 +41,10 @@ class Configuration
         String getUserMqtt();
         String getMdpMqtt();
         int getUnivers();
+        String getNameModuleWifi();
 
     private:
         void lireMemoire();
-        void ecrireMemoire();
         void creationPointAcces();
 
         String _ssidWifi;
@@ -54,6 +54,7 @@ class Configuration
         String _userMqtt;
         String _mdpMqtt;
         int _univers;
+        String _nomModuleWifi;
 };
 
 void resetConfiguration();

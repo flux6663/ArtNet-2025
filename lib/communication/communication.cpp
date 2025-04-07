@@ -38,6 +38,11 @@ void Communication::setFlag(bool mqttFlag)
     _mqttFlag = mqttFlag;
 }
 
+int Communication::getUnivers()
+{
+    return _univers;
+}
+
 void Communication::envoyerMessage(String mqtt_topic, String data)
 {
     clientMQTT.publish(mqtt_topic.c_str(), data.c_str());
@@ -64,8 +69,12 @@ void Communication::receptionDataMQTT()
     clientMQTT.loop();
 }
 
-void Communication::initialiserWiFi(String ssid, String password)
+void Communication::initialiserWiFi(String nomModuleWifi, String ssid, String password)
 {
+
+    _nomModuleWifi = nomModuleWifi;
+
+    WiFi.mode(WIFI_MODE_STA);
     WiFi.begin(ssid.c_str(), password.c_str());
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -83,13 +92,11 @@ void Communication::initialiserMQTT(String mqttBroker, uint16_t mqttPort, String
 
     while (!clientMQTT.connected())
     {
-        String nomClient = "Module-WiFi-DMX_";
-        nomClient += String(WiFi.macAddress());
 
         Serial.println("Connexion au broker..");
 
-        if (clientMQTT.connect(nomClient.c_str(), mqttUsername.c_str(), mqttPassword.c_str())) {
-            Serial.printf("Le client : %s est connecter au broker\r\n", nomClient.c_str());
+        if (clientMQTT.connect(_nomModuleWifi.c_str(), mqttUsername.c_str(), mqttPassword.c_str())) {
+            Serial.printf("Le client : %s est connecter au broker\r\n", _nomModuleWifi.c_str());
         } else {
             Serial.print("ERREUR : ");
             Serial.println(clientMQTT.state());
@@ -102,13 +109,18 @@ void Communication::initialiserMQTT(String mqttBroker, uint16_t mqttPort, String
 
 void Communication::sinscrireAuxTopic() {
 
-    String topicLectureCanaux = (String)MQTT_TOPIC_RECEPTION_CANAUX;
+    String topicLectureCanaux = (String)MQTT_TOPIC_RECEPTION_CANAUX + "/" + (String)_univers;
 
     clientMQTT.subscribe(topicLectureCanaux.c_str());
 
     Serial.print("Abonner au topic : ");
     Serial.println(topicLectureCanaux);
 
+}
+
+void Communication::initialiserUnivers(int univers)
+{
+    _univers = univers;
 }
 
 void nouveauMessageMQTT(char *mqttTopic, byte *mqttPayload, unsigned int nombreCarathere)

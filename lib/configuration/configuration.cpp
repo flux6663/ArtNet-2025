@@ -1,26 +1,10 @@
 #include "configuration.h"
 #include <Arduino.h>
 
+volatile bool _flagResetModule = RESET_FLAG;
+
 AsyncWebServer serverWeb(PORT_SERVEUR_WEB);
 Preferences memoire;
-
-void resetConfiguration() {
-  memoire.begin("config", false);
-  memoire.remove(CLE_MEMOIRE_WIFI_SSID);
-  memoire.remove(CLE_MEMOIRE_WIFI_MDP);
-
-  memoire.remove(CLE_MEMOIRE_MQTT_IP);
-  memoire.remove(CLE_MEMOIRE_MQTT_PORT);
-  memoire.remove(CLE_MEMOIRE_MQTT_USER);
-  memoire.remove(CLE_MEMOIRE_MQTT_MDP);
-
-  memoire.remove(CLE_MEMOIRE_UNIVERS);
-  memoire.end();
-
-  delay(1000);
-
-  ESP.restart();
-}
 
 void IRAM_ATTR appuisBoutonReset() {
   static unsigned long tempsCourant = 0;
@@ -30,9 +14,17 @@ void IRAM_ATTR appuisBoutonReset() {
   if((tempsCourant - nouveauTemps) > TEMPS_REBONS) {
     nouveauTemps = tempsCourant;
 
-    resetConfiguration();
+    _flagResetModule = NEW_FLAG;
 
   }
+}
+
+void interruptionWifiDemmaragePointAcces(WiFiEvent_t wifi_event, WiFiEventInfo_t wifi_info) {
+  Serial.println(F("Wifi : Demarrage point d'acces"));
+}
+
+void interruptionWifiNouveauClient(WiFiEvent_t wifi_event, WiFiEventInfo_t wifi_info) {
+  Serial.println(F("Wifi : Nouvelle connexion"));
 }
 
 void Configuration::initialiserBoutonReset() {
@@ -42,9 +34,11 @@ void Configuration::initialiserBoutonReset() {
 
 void Configuration::initialiserMemoire() {
 
+  this->initialiserBoutonReset();
+
   if(!SPIFFS.begin())
   {
-    Serial.println("Erreur SPIFFS...");
+    Serial.println(F("Erreur SPIFFS..."));
     return;
   }
 
@@ -60,7 +54,6 @@ void Configuration::initialiserMemoire() {
   }
 
   this->lireMemoire();
-  this->initialiserBoutonReset();
 }
 
 void Configuration::lireMemoire() {
@@ -69,26 +62,18 @@ void Configuration::lireMemoire() {
   _mdpWifi = memoire.getString(CLE_MEMOIRE_WIFI_MDP, "");
 
   _ipMqtt = memoire.getString(CLE_MEMOIRE_MQTT_IP, "");
-  _portMqtt = memoire.getInt(CLE_MEMOIRE_MQTT_PORT, 0);
+  _portMqtt = memoire.getInt(CLE_MEMOIRE_MQTT_PORT, MQTT_PORT);
   _userMqtt = memoire.getString(CLE_MEMOIRE_MQTT_USER, "");
   _mdpMqtt = memoire.getString(CLE_MEMOIRE_MQTT_MDP, "");
 
   _univers = memoire.getInt(CLE_MEMOIRE_UNIVERS, 0);
   memoire.end();
-}
 
-String Configuration::getNameModuleWifi()
-{
-  String adressMac = WiFi.macAddress();
-  String dernierNumeroAdressMac = adressMac.substring(adressMac.length() - 5);
-  dernierNumeroAdressMac.replace(":", "");
-  _nomModuleWifi = "Module-" + dernierNumeroAdressMac;
-  return _nomModuleWifi;
+  if (_portMqtt == 0) _portMqtt = 1883;
+  
 }
 
 void Configuration::creationServeurWeb() {
-
-  this->creationPointAcces();
 
   serverWeb.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
   {
@@ -110,10 +95,12 @@ void Configuration::creationServeurWeb() {
     String ssid = request->hasParam("wifi_ssid") ? request->getParam("wifi_ssid")->value() : "";
     String wifiMdp = request->hasParam("wifi_mdp") ? request->getParam("wifi_mdp")->value() : "";
     String mqttIp = request->hasParam("mqtt_ip") ? request->getParam("mqtt_ip")->value() : "";
-    String mqttPort = request->hasParam("mqtt_port") ? request->getParam("mqtt_port")->value() : "";
+    String mqttPort = request->hasParam("mqtt_port") ? request->getParam("mqtt_port")->value() : (String)MQTT_PORT;
     String mqttUser = request->hasParam("mqtt_user") ? request->getParam("mqtt_user")->value() : "";
     String mqttMdp = request->hasParam("mqtt_mdp") ? request->getParam("mqtt_mdp")->value() : "";
     String univers = request->hasParam("univers") ? request->getParam("univers")->value() : "";
+
+    if (mqttPort == 0) mqttPort = 1883;
 
     memoire.begin("config", false);
     memoire.putString(CLE_MEMOIRE_WIFI_SSID, ssid);
@@ -127,7 +114,7 @@ void Configuration::creationServeurWeb() {
     memoire.putInt(CLE_MEMOIRE_UNIVERS, univers.toInt());
     memoire.end();
 
-    Serial.println("Nouvelle valeur de configuration recue !");
+    Serial.println(F("Nouvelle configuration recue !"));
 
     Serial.print("ssid : ");
     Serial.println(ssid);
@@ -147,7 +134,7 @@ void Configuration::creationServeurWeb() {
     Serial.println(univers);
 
     request->send(200, "text/plain", "Configuration sauvegardée. Redémarrage...");
-    Serial.print("Configuration sauvegardée. Redémarrage...");
+    Serial.print(F("Configuration sauvegardée. Redémarrage..."));
     delay(2000);
     ESP.restart();
   });
@@ -157,8 +144,13 @@ void Configuration::creationServeurWeb() {
 }
 
 void Configuration::creationPointAcces() {
+
+  String nomModuleWifi = this->getNameModuleWifi();
+
   WiFi.mode(WIFI_MODE_AP);
-  WiFi.softAP(_nomModuleWifi, POINT_ACCES_MDP);
+  WiFi.onEvent(interruptionWifiDemmaragePointAcces, ARDUINO_EVENT_WIFI_AP_START);
+  WiFi.onEvent(interruptionWifiNouveauClient, ARDUINO_EVENT_WIFI_AP_STACONNECTED);
+  WiFi.softAP(nomModuleWifi, POINT_ACCES_MDP);
 }
 
 bool Configuration::configurationSauvegarder() {
@@ -170,6 +162,51 @@ bool Configuration::configurationSauvegarder() {
 
   return false;
 
+}
+
+void resetConfiguration() {
+  memoire.begin("config", false);
+  memoire.remove(CLE_MEMOIRE_WIFI_SSID);
+  memoire.remove(CLE_MEMOIRE_WIFI_MDP);
+
+  memoire.remove(CLE_MEMOIRE_MQTT_IP);
+  memoire.remove(CLE_MEMOIRE_MQTT_PORT);
+  memoire.remove(CLE_MEMOIRE_MQTT_USER);
+  memoire.remove(CLE_MEMOIRE_MQTT_MDP);
+
+  memoire.remove(CLE_MEMOIRE_UNIVERS);
+  memoire.end();
+
+  delay(1000);
+
+  ESP.restart();
+}
+
+String Configuration::getNameModuleWifi()
+{
+  String adressMac = this->getMacAdress();
+  String dernierNumeroAdressMac = adressMac.substring(adressMac.length() - 5);
+  dernierNumeroAdressMac.replace(":", "");
+  _nomModuleWifi = POINT_ACCES_SSID + dernierNumeroAdressMac;
+  return _nomModuleWifi;
+}
+
+String Configuration::getMacAdress()
+{
+  String adressMac = WiFi.macAddress();
+  return adressMac;
+}
+
+String Configuration::getIpAdress()
+{
+  String adressIp = WiFi.localIP().toString();
+  return adressIp;
+}
+
+uint8_t Configuration::getQualiteLienWifi()
+{
+  uint8_t qualiteLienWifi = WiFi.RSSI();
+  return qualiteLienWifi;
 }
 
 String Configuration::getSsidWifi() {
@@ -198,4 +235,8 @@ String Configuration::getMdpMqtt() {
 
 int Configuration::getUnivers() {
   return _univers;
+}
+
+bool Configuration::getFlagResetConfig() {
+  return _flagResetModule;
 }

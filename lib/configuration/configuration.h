@@ -16,6 +16,8 @@
 #define POINT_ACCES_MDP ""
 #define PORT_SERVEUR_WEB 80
 
+#define MQTT_PORT 1883
+
 #define CLE_MEMOIRE_WIFI_SSID "wifi_ssid"
 #define CLE_MEMOIRE_WIFI_MDP "wifi_mdp"
 
@@ -26,12 +28,16 @@
 
 #define CLE_MEMOIRE_UNIVERS "univers"
 
+#define RESET_FLAG false
+#define NEW_FLAG true
+
 class Configuration
 {
     public:
         void initialiserMemoire();
         void initialiserBoutonReset();
         void creationServeurWeb();
+        void creationPointAcces();
         
         bool configurationSauvegarder();
         String getSsidWifi();
@@ -41,11 +47,17 @@ class Configuration
         String getUserMqtt();
         String getMdpMqtt();
         int getUnivers();
+
+
         String getNameModuleWifi();
+        uint8_t getQualiteLienWifi();
+        String getIpAdress();
+        String getMacAdress();
+
+        bool getFlagResetConfig();
 
     private:
         void lireMemoire();
-        void creationPointAcces();
 
         String _ssidWifi;
         String _mdpWifi;

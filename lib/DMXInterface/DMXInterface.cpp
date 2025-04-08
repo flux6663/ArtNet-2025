@@ -1,6 +1,5 @@
 #include "DMXInterface.h"
 #include <Arduino.h>
-#include <ArduinoJson.h>
 
 #define PERSONALITER_DMX 1
 

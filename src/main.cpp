@@ -13,6 +13,7 @@ void initialiserWifi() {
   String wifiMdp = sauvegarde.getMdpWifi();
   String nomModuleWifi = sauvegarde.getNameModuleWifi();
 
+  Serial.println(F("Connexion au WiFi : "));
   Serial.println("wifiSsid : " + wifiSsid);
   Serial.println("wifiMdp : " + wifiMdp);
   Serial.println("nomModuleWifi : " + nomModuleWifi);
@@ -24,6 +25,7 @@ void initialiserUnivers() {
 
   int univers = sauvegarde.getUnivers();
 
+  Serial.println(F("Information Univers : "));
   Serial.println("univers : " + (String)univers);
   transmission.initialiserUnivers(univers);
 
@@ -31,17 +33,25 @@ void initialiserUnivers() {
 
 void initialiserMqtt() {
 
-  String mqttIp = sauvegarde.getIpMqtt();
-  int mqttPort = sauvegarde.getPortMqtt();
-  String mqttUser = sauvegarde.getUserMqtt();
-  String mqttMdp = sauvegarde.getMdpMqtt();
+  bool etatWifi = transmission.getEtatWifi();
+  bool etatMqtt = transmission.getEtatMqtt();
 
-  Serial.println("mqttIp : " + mqttIp);
-  Serial.println("mqttPort : " + (String)mqttPort);
-  Serial.println("mqttUser : " + mqttUser);
-  Serial.println("mqttMdp : " + mqttMdp);
+  if(etatWifi == CONNECTER && etatMqtt == DECONNECTER) {
 
-  transmission.initialiserMQTT(mqttIp, mqttPort, mqttUser, mqttMdp);
+    String mqttIp = sauvegarde.getIpMqtt();
+    int mqttPort = sauvegarde.getPortMqtt();
+    String mqttUser = sauvegarde.getUserMqtt();
+    String mqttMdp = sauvegarde.getMdpMqtt();
+
+    Serial.println(F("Connexion au MQTT : "));
+    Serial.println("mqttIp : " + mqttIp);
+    Serial.println("mqttPort : " + (String)mqttPort);
+    Serial.println("mqttUser : " + mqttUser);
+    Serial.println("mqttMdp : " + mqttMdp);
+
+    transmission.initialiserMQTT(mqttIp, mqttPort, mqttUser, mqttMdp);
+
+  }
 
 }
 
@@ -53,7 +63,7 @@ void setup()
   if (sauvegarde.configurationSauvegarder() == true)
   {
 
-    Serial.println("Recuperation des donners sauvegarder :");
+    Serial.println(F("Recuperation des donners sauvegarder :"));
 
     initialiserWifi();
     initialiserUnivers();
@@ -62,8 +72,22 @@ void setup()
     dmx.initialiser();
 
   } else {
-    sauvegarde.creationServeurWeb();
-    Serial.println("pas de valeur sauvegarder !");
+    sauvegarde.creationPointAcces();
+    Serial.println(F("pas de valeur sauvegarder !"));
+  }
+
+  sauvegarde.creationServeurWeb();
+  
+}
+
+void reinitilisationModule() {
+
+  bool flagResetConfig = sauvegarde.getFlagResetConfig();
+
+  if (flagResetConfig == NEW_FLAG)
+  {
+    flagResetConfig = RESET_FLAG;
+    resetConfiguration();
   }
   
 }
@@ -90,7 +114,34 @@ void nouveauMessage() {
 
 }
 
+void envoieConfig() {
+
+  bool flagTimerConfig = transmission.getFlagTimerConfig();
+  int univers = sauvegarde.getUnivers();
+  String adressIp = sauvegarde.getIpAdress();
+  String adressMac = sauvegarde.getMacAdress();
+  uint8_t qualiteLienWifi = sauvegarde.getQualiteLienWifi();
+
+  if (flagTimerConfig == NEW_FLAG)
+  {
+    transmission.setFlagTimerConfig(RESET_FLAG);
+    envoieConfiguration(univers, adressIp, adressMac, qualiteLienWifi);
+  }
+  
+}
+
 void loop()
 {
-  nouveauMessage();
+  reinitilisationModule();
+
+  bool etatWifi = transmission.getEtatWifi();
+  bool etatMqtt = transmission.getEtatMqtt();
+
+  if (etatWifi == CONNECTER && etatMqtt == CONNECTER)
+  {
+    nouveauMessage();
+    envoieConfig();
+  } else {
+    initialiserMqtt();
+  }
 }

@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <esp_dmx.h>
+#include <ArduinoJson.h>
 
 #define DMX_TX_PIN 3
 #define DMX_RX_PIN 4

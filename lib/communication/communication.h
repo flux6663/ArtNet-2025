@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <PubSubClient.h>
 #include <WiFi.h>
+#include "esp_timer.h"
+#include <ArduinoJson.h>
 
 #define WIFI_MDP ""
 #define WIFI_CHANNEL 0
@@ -18,13 +20,18 @@
 
 #define RESET_FLAG false
 #define NEW_FLAG true
+#define DECONNECTER false
+#define CONNECTER true
+#define LIMITE_COMPTEUR 10
+
+#define NUMERO_TIMER 3
+#define FREQUENCE_TIMER 80
+#define TEMPS_ATTENTE 60000000
 
 class Communication
 {
 
 public:
-    void envoieConfiguration(int univers);
-    void envoyerMessage(String mqtt_topic, String data);
     void initialiserWiFi(String nomModuleWifi, String ssid, String password = WIFI_MDP);
     void initialiserMQTT(String mqttBroker, uint16_t mqttPort = MQTT_PORT, String mqttUsername = MQTT_USER, String mqttPassword = MQTT_MDP);
     void initialiserUnivers(int univers);
@@ -37,15 +44,18 @@ public:
     bool getFlag();
     void setFlag(bool mqttFlag);
     int getUnivers();
+    void setFlagTimerConfig(bool mqttFlagTimerConfig);
+    bool getFlagTimerConfig();
+    bool getEtatWifi();
+    bool getEtatMqtt();
 
 private:
     void sinscrireAuxTopic();
-
-    int _univers;
-    String _nomModuleWifi;
+    void initialiserTimer();
 
 };
 
-void nouveauMessageMQTT(char *mqttTopic, byte *payload, unsigned int nombreCarathere);
+void envoieConfiguration(int univers, String adressIp, String adressMac, uint8_t qualiteLienWifi);
+void envoyerMessage(String mqtt_topic, String data);
 
 #endif

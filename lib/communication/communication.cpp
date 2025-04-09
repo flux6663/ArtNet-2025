@@ -15,7 +15,7 @@ volatile uint8_t _compteurMqtt = 0;
 volatile uint8_t _compteurWifi = 0;
 volatile bool _mqttFlagNouveauMessage = RESET_FLAG;
 volatile bool _mqttFlagTimerConfig = RESET_FLAG;
-hw_timer_t * timer = NULL;
+hw_timer_t * timerConfig = NULL;
 
 WiFiClient connexionWiFi;
 PubSubClient clientMQTT(connexionWiFi);
@@ -115,35 +115,26 @@ void Communication::initialiserUnivers(int univers)
 
 void Communication::initialiserTimer() {
 
-    timer = timerBegin(NUMERO_TIMER, FREQUENCE_TIMER, true);
-    timerAttachInterrupt(timer, &interuptionEnvoieConfiguration, true);
-    timerAlarmWrite(timer, TEMPS_ATTENTE, true);
-    timerAlarmEnable(timer);
+    timerConfig = timerBegin(NUMERO_TIMER, FREQUENCE_TIMER, true);
+    timerAttachInterrupt(timerConfig, &interuptionEnvoieConfiguration, true);
+    timerAlarmWrite(timerConfig, TEMPS_ATTENTE, true);
+    timerAlarmEnable(timerConfig);
 
 }
 
 void Communication::initialiserMQTT(String mqttBroker, uint16_t mqttPort, String mqttUsername, String mqttPassword)
 {
-
     clientMQTT.setServer(mqttBroker.c_str(), mqttPort);
     clientMQTT.setCallback(interuptionNouveauMessageMQTT);
 
-    while (this->getEtatMqtt() == DECONNECTER && _compteurMqtt <= LIMITE_COMPTEUR)
-    {
-        Serial.print(F("MQTT : Tentative de connexion au broker..."));
+    Serial.print(F("MQTT : Tentative de connexion au broker..."));
+    if (clientMQTT.connect(_nomModuleWifi.c_str(), mqttUsername.c_str(), mqttPassword.c_str())) {
 
-        if (clientMQTT.connect(_nomModuleWifi.c_str(), mqttUsername.c_str(), mqttPassword.c_str())) {
-            Serial.printf("\r\nMQTT : Le client : %s est connecter au broker\r\n", _nomModuleWifi.c_str());
-        } else {
-            _compteurMqtt++;
-            delay(2000);
-        }
+        Serial.printf("\r\nMQTT : Le client : %s est connecter au broker\r\n", _nomModuleWifi.c_str());
+        this->sinscrireAuxTopic();
+        this->initialiserTimer();
+        
     }
-
-    _compteurMqtt = 0;
-
-    this->sinscrireAuxTopic();
-    this->initialiserTimer();
 }
 
 void Communication::sinscrireAuxTopic() {

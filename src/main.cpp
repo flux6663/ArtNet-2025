@@ -2,10 +2,12 @@
 #include "configuration.h"
 #include "communication.h"
 #include "DMXInterface.h"
+#include "affichage.h"
 
 Configuration sauvegarde;
 Communication transmission;
 Interface dmx;
+Affichage ecrant;
 
 void initialiserWifi() {
 

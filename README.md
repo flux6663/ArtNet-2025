@@ -82,22 +82,31 @@ default_envs = seeed_xiao_esp32c3
 
 [common]
 monitor_speed = 115200
-lib_deps = 
+lib_deps_external = 
 	someweisguy/esp_dmx@^4.1.0
 	knolleary/PubSubClient@^2.8
 	bblanchon/ArduinoJson@^7.3.1
+	esp32async/ESPAsyncWebServer@^3.7.4
+	esp32async/AsyncTCP @ ^3.3.8
+	adafruit/Adafruit SSD1306
 
 [env:seeed_xiao_esp32c3]
 platform = espressif32
 board = seeed_xiao_esp32c3
 board_build.mcu = esp32c3
 board_build.f_cpu = 160000000L
-framework = arduino
+framework = arduino 
+monitor_speed = ${common.monitor_speed}
+lib_deps = 
+	${common.lib_deps_external}
 
 [env:esp32dev]
 platform = espressif32
 board = esp32dev
 framework = arduino
+monitor_speed = ${common.monitor_speed}
+lib_deps = 
+	${common.lib_deps_external}
 ```
 
 ### Brochage des Pins

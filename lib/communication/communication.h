@@ -28,6 +28,11 @@
 #define FREQUENCE_TIMER 80
 #define TEMPS_ATTENTE 60000000
 
+#define RSSI_TRES_BON -55
+#define RSSI_ASSEZ_BON -67
+#define RSSI_PASSABLE -70
+#define RSSI_PAS_BON -80
+
 class Communication
 {
 
@@ -48,14 +53,17 @@ public:
     bool getFlagTimerConfig();
     bool getEtatWifi();
     bool getEtatMqtt();
+    float getPuissanceWifi();
+    String getQualiterWifi();
 
 private:
+    float _puissanceWifi;
     void sinscrireAuxTopic();
     void initialiserTimer();
 
 };
 
-void envoieConfiguration(int univers, String adressIp, String adressMac, uint8_t qualiteLienWifi);
+void envoieConfiguration(int univers, String adressIp, String adressMac, float puissanceWifi);
 void envoyerMessage(String mqtt_topic, String data);
 
 #endif

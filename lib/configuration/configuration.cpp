@@ -1,5 +1,6 @@
 #include "configuration.h"
 #include <Arduino.h>
+#include <WiFi.h>
 
 volatile bool _flagResetModule = RESET_FLAG;
 
@@ -201,12 +202,6 @@ String Configuration::getIpAdress()
 {
   String adressIp = WiFi.localIP().toString();
   return adressIp;
-}
-
-uint8_t Configuration::getQualiteLienWifi()
-{
-  uint8_t qualiteLienWifi = WiFi.RSSI();
-  return qualiteLienWifi;
 }
 
 String Configuration::getSsidWifi() {

@@ -50,7 +50,6 @@ class Configuration
 
 
         String getNameModuleWifi();
-        uint8_t getQualiteLienWifi();
         String getIpAdress();
         String getMacAdress();
 

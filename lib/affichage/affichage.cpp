@@ -102,7 +102,7 @@ void Affichage::ecrireLigne(String ligne1, String ligne2, String ligne3, String 
 void Affichage::menuWifi(String wifiSsid, String adressIp, String qualiteLienWifi) {
   wifiSsid = "SSID : " + wifiSsid;
   adressIp = "IP : " + adressIp;
-  qualiteLienWifi = "RSSI : " + qualiteLienWifi + " dB";
+  qualiteLienWifi = "Signal : " + qualiteLienWifi;
   this->ecrireLigne("Conf. Wi-Fi : ", wifiSsid, adressIp, qualiteLienWifi);
 }
 

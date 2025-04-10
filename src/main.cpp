@@ -146,12 +146,12 @@ void envoieConfig() {
   int univers = sauvegarde.getUnivers();
   String adressIp = sauvegarde.getIpAdress();
   String adressMac = sauvegarde.getMacAdress();
-  uint8_t qualiteLienWifi = sauvegarde.getQualiteLienWifi();
+  float puissanceWifi = transmission.getPuissanceWifi();
 
   if (flagTimerConfig == NEW_FLAG)
   {
     transmission.setFlagTimerConfig(RESET_FLAG);
-    envoieConfiguration(univers, adressIp, adressMac, qualiteLienWifi);
+    envoieConfiguration(univers, adressIp, adressMac, puissanceWifi);
   }
   
 }
@@ -163,7 +163,7 @@ void menuEcran() {
     break;
 
     case Wifi:
-      ecran.menuWifi(sauvegarde.getSsidWifi(), sauvegarde.getIpAdress(), (String)sauvegarde.getQualiteLienWifi());
+      ecran.menuWifi(sauvegarde.getSsidWifi(), sauvegarde.getIpAdress(), (String)transmission.getQualiterWifi());
     break;
 
     case Mqtt:

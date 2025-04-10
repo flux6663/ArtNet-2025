@@ -72,15 +72,15 @@ void envoyerMessage(String mqtt_topic, String data)
     clientMQTT.publish(mqtt_topic.c_str(), data.c_str());
 }
 
-void envoieConfiguration(int univers, String adressIp, String adressMac, uint8_t qualiteLienWifi) {
+void envoieConfiguration(int univers, String adressIp, String adressMac, float puissanceWifi) {
 
     String topicEnvoieConfig = (String)MQTT_TOPIC_CONFIG_MODULE + "/" + _nomModuleWifi;
     String configModule;
 
     jsonConfig["univers"] = univers;
-    jsonConfig["adressIp"] = adressIp;
-    jsonConfig["adressMac"] = adressMac;
-    jsonConfig["qualiteLienWifi"] = qualiteLienWifi;
+    jsonConfig["ip"] = adressIp;
+    jsonConfig["mac"] = adressMac;
+    jsonConfig["rssi"] = puissanceWifi;
     serializeJson(jsonConfig, configModule);
 
     envoyerMessage(topicEnvoieConfig, configModule);
@@ -202,4 +202,33 @@ bool Communication::getEtatMqtt()
 {
     _etatConnexionMqtt = clientMQTT.connected();
     return _etatConnexionMqtt;
+}
+
+float Communication::getPuissanceWifi()
+{
+  _puissanceWifi = WiFi.RSSI();
+  return _puissanceWifi;
+}
+
+String Communication::getQualiterWifi()
+{
+    this->getPuissanceWifi();
+
+    if (_puissanceWifi >= RSSI_TRES_BON)
+    {
+        return "Tres bon";
+    } else if(_puissanceWifi >= RSSI_ASSEZ_BON) 
+    {
+        return "Assez bon";
+    } else if(_puissanceWifi >= RSSI_PASSABLE) 
+    {
+        return "Passable";
+    } else if(_puissanceWifi >= RSSI_PAS_BON) 
+    {
+        return "Pas bon";
+    } else
+    {
+        return "Mediocre";
+    }
+  
 }

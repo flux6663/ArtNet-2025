@@ -27,7 +27,7 @@
 #define LIMITE_COMPTEUR 10
 
 // Timer d'envoie de la configuration (15s)
-#define NUMERO_TIMER 0
+#define NUMERO_TIMER 3
 #define FREQUENCE_TIMER 80
 #define TEMPS_ATTENTE 15000000
 

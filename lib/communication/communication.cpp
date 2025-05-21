@@ -13,6 +13,8 @@ volatile bool _etatConnexionWifi = DECONNECTER;
 volatile bool _etatConnexionMqtt = DECONNECTER;
 volatile uint8_t _compteurMqtt = 0;
 volatile uint8_t _compteurWifi = 0;
+
+portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 volatile bool _mqttFlagNouveauMessage = RESET_FLAG;
 volatile bool _mqttFlagTimerConfig = RESET_FLAG;
 hw_timer_t * timerConfig = NULL;
@@ -53,7 +55,9 @@ void interuptionNouveauMessageMQTT(char *mqttTopic, byte *mqttPayload, unsigned 
 }
 
 void IRAM_ATTR interuptionEnvoieConfiguration() {
+    portENTER_CRITICAL_ISR(&timerMux);
     _mqttFlagTimerConfig = NEW_FLAG;
+    portEXIT_CRITICAL_ISR(&timerMux);
 }
 
 void envoyerMessage(String mqtt_topic, String data)

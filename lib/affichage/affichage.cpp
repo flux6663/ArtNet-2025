@@ -1,26 +1,13 @@
 #include "affichage.h"
 #include <Arduino.h>
 
-#define NUMERO_TIMER 1
-#define FREQUENCE_TIMER 80
-#define TEMPS_MENU_ECRAN 10000000
+#define TIMER_INTERVAL_SEC    15000
 
 bool _etatConnexion = DECONNECTER;
 volatile bool _flagChangementMenu = NEW_FLAG;
 hw_timer_t * timerMenu = NULL;
 
 Adafruit_SSD1306 oLed(LARGEUR_OLED, HAUTEUR_OLED, &Wire, OLED_RESET);
-
-void IRAM_ATTR interuptionChangementMenu() {
-  _flagChangementMenu = NEW_FLAG;
-}
-
-void Affichage::initialiserTimer() {
-  timerMenu = timerBegin(NUMERO_TIMER, FREQUENCE_TIMER, true);
-  timerAttachInterrupt(timerMenu, &interuptionChangementMenu, true);
-  timerAlarmWrite(timerMenu, TEMPS_MENU_ECRAN, true);
-  timerAlarmEnable(timerMenu);
-}
 
 void Affichage::initialiserLed() {
   pinMode(PIN_LED_ETAT, OUTPUT);

@@ -10,8 +10,8 @@
 #define DMX_RTS_PIN 10
 #define PORT_DMX DMX_NUM_1
 
-#define PIN_DMX_LED_1 3
-#define PIN_DMX_LED_2 2
+#define PIN_DMX_LED_1 17
+#define PIN_DMX_LED_2 18
 #define ALLUMER true
 #define ETEIN false
 #define TEMPS_CLIGNOTEMENT_LED 500
@@ -23,8 +23,7 @@ class Interface
 {
     public:
     void initialiser(uint8_t numeroPortDMX = PORT_DMX, uint8_t pinTranmissionDMX = DMX_TX_PIN, uint8_t pinReceptionDMX = DMX_RX_PIN, uint8_t pinRTS_DMX = DMX_RTS_PIN);
-    void envoyerCanaux();
-    void modifierValeurCanaux(String message);
+    void envoyerCanaux(String message);
     void ledTransmissionDonnerDMX();
     void arretUrgence();
     void resetUrgence();

@@ -1,6 +1,8 @@
 #ifndef _COMMUNICATION_H__
 #define __COMMUNICATION_H__
 
+#define MQTT_MAX_PACKET_SIZE 1024
+
 #include <Arduino.h>
 #include <PubSubClient.h>
 #include <WiFi.h>
@@ -24,9 +26,10 @@
 #define CONNECTER true
 #define LIMITE_COMPTEUR 10
 
+// Timer d'envoie de la configuration (15s)
 #define NUMERO_TIMER 3
 #define FREQUENCE_TIMER 80
-#define TEMPS_ATTENTE 60000000
+#define TEMPS_ATTENTE 15000000
 
 #define RSSI_TRES_BON -55
 #define RSSI_ASSEZ_BON -67

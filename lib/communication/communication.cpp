@@ -42,25 +42,14 @@ void interruptionWifiNouvelleAdressIp(WiFiEvent_t wifi_event, WiFiEventInfo_t wi
 
 void interuptionNouveauMessageMQTT(char *mqttTopic, byte *mqttPayload, unsigned int nombreCarathere)
 {
-    String message = "";
-    static String old_message;
+    // Pré-alloue la taille du message pour éviter les reallocations
+    String message((char*)mqttPayload, nombreCarathere);
 
-    for (int i = 0; i < nombreCarathere; i++)
-    {
-        message += (char)mqttPayload[i]; 
-    }
+    Serial.println(message);
 
-    if (old_message != message)
-    {
-        Serial.println(message);
-
-        _mqttFlagNouveauMessage = NEW_FLAG;
-        _mqttTopic = mqttTopic;
-        _mqttMessage = message;
-
-        old_message = message;
-    }
-    
+    _mqttFlagNouveauMessage = NEW_FLAG;
+    _mqttTopic = mqttTopic;
+    _mqttMessage = message;
 }
 
 void IRAM_ATTR interuptionEnvoieConfiguration() {

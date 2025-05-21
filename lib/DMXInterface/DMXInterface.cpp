@@ -27,38 +27,44 @@ void Interface::initialiserLed() {
 
 void Interface::lireJson(String message)
 {
-
   JsonDocument messageJson;
   DeserializationError error = deserializeJson(messageJson, message);
   
   if (error) {
-    Serial.print("Erreur de parsing JSON: ");
-    Serial.println(error.c_str());
+    Serial.print(F("Erreur JSON: "));
+    Serial.println(error.f_str());
     return;
   }
-  
+
   for (JsonObject obj : messageJson.as<JsonArray>()) {
     int canal = obj["canal"];
     int valeur = obj["valeur"];
 
-    Serial.println("canal : " + (String)canal + ", valeur : " + (String) valeur);
+    Serial.println("canal : " + String(canal) + ", valeur : " + String(valeur));
 
-    _canauxDmx[canal] = valeur;
+    if (canal >= 0 && canal < 512) {
+      _canauxDmx[canal] = valeur;
+    } else {
+      Serial.println("Canal hors limites: " + String(canal));
+    }
   }
-
 }
 
-void Interface::envoyerCanaux(String message)
+void Interface::envoyerCanaux()
 {
   if (_arretUrgence == false)
   {
-    this->lireJson(message);
     _transmissionDMX = NOUVELLE_TRANMISSION_DMX;
 
     dmx_write(PORT_DMX, _canauxDmx, DMX_PACKET_SIZE);
     dmx_wait_sent(PORT_DMX, DMX_TIMEOUT_TICK);
     dmx_send_num(PORT_DMX, DMX_PACKET_SIZE);
   }
+}
+
+void Interface::modifierValeurCanaux(String message)
+{
+  this->lireJson(message);
 }
 
 void Interface::arretUrgence()

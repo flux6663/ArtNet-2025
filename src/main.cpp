@@ -132,7 +132,7 @@ void nouveauMessage() {
 
     if (topic == topicReceptionCanaux)
     {
-      dmx.envoyerCanaux(message);
+      dmx.modifierValeurCanaux(message);
     }
 
     transmission.setFlag(RESET_FLAG);
@@ -227,6 +227,7 @@ void loop()
     ledEtatConnecter();
     changementMenuEcran();
     nouveauMessage();
+    dmx.envoyerCanaux();
     envoieConfig();
   } else {
     dmx.arretUrgence();

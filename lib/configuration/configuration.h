@@ -8,7 +8,7 @@
 #include <Preferences.h>
 #include <SPIFFS.h>
 
-#define PIN_BOUTON_RESET 4
+#define PIN_BOUTON_RESET 27
 #define TEMPS_RESET_BOUTON 5000
 #define TEMPS_REBONS 210
 

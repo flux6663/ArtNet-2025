@@ -5,9 +5,9 @@
 #include <esp_dmx.h>
 #include <ArduinoJson.h>
 
-#define DMX_TX_PIN 9
-#define DMX_RX_PIN 8
-#define DMX_RTS_PIN 10
+#define DMX_TX_PIN 16
+#define DMX_RX_PIN 23
+#define DMX_RTS_PIN 19
 #define PORT_DMX DMX_NUM_1
 
 #define PIN_DMX_LED_1 17
@@ -23,7 +23,8 @@ class Interface
 {
     public:
     void initialiser(uint8_t numeroPortDMX = PORT_DMX, uint8_t pinTranmissionDMX = DMX_TX_PIN, uint8_t pinReceptionDMX = DMX_RX_PIN, uint8_t pinRTS_DMX = DMX_RTS_PIN);
-    void envoyerCanaux(String message);
+    void envoyerCanaux();
+    void modifierValeurCanaux(String message);
     void ledTransmissionDonnerDMX();
     void arretUrgence();
     void resetUrgence();

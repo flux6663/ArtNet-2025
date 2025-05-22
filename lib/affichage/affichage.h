@@ -6,7 +6,6 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
 #include "esp_timer.h"
-#include "driver/timer.h"
 
 #define MENU_1 1
 #define MENU_2 2
@@ -15,8 +14,8 @@
 #define RESET_FLAG false
 #define NEW_FLAG true
 
-#define BROCHE_SDA_0 6
-#define BROCHE_SCL_0 7
+#define BROCHE_SDA_0 21
+#define BROCHE_SCL_0 22
 
 #define ADRESSE_OLED 0x3C
 

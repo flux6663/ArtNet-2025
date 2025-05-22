@@ -13,8 +13,6 @@ volatile bool _etatConnexionWifi = DECONNECTER;
 volatile bool _etatConnexionMqtt = DECONNECTER;
 volatile uint8_t _compteurMqtt = 0;
 volatile uint8_t _compteurWifi = 0;
-
-portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 volatile bool _mqttFlagNouveauMessage = RESET_FLAG;
 volatile bool _mqttFlagTimerConfig = RESET_FLAG;
 hw_timer_t * timerConfig = NULL;
@@ -44,31 +42,18 @@ void interruptionWifiNouvelleAdressIp(WiFiEvent_t wifi_event, WiFiEventInfo_t wi
 
 void interuptionNouveauMessageMQTT(char *mqttTopic, byte *mqttPayload, unsigned int nombreCarathere)
 {
-    String message = "";
-    static String old_message;
+    // Pré-alloue la taille du message pour éviter les reallocations
+    String message((char*)mqttPayload, nombreCarathere);
 
-    for (int i = 0; i < nombreCarathere; i++)
-    {
-        message += (char)mqttPayload[i]; 
-    }
+    Serial.println(message);
 
-    if (old_message != message)
-    {
-        Serial.println(message);
-
-        _mqttFlagNouveauMessage = NEW_FLAG;
-        _mqttTopic = mqttTopic;
-        _mqttMessage = message;
-
-        old_message = message;
-    }
-    
+    _mqttFlagNouveauMessage = NEW_FLAG;
+    _mqttTopic = mqttTopic;
+    _mqttMessage = message;
 }
 
 void IRAM_ATTR interuptionEnvoieConfiguration() {
-    portENTER_CRITICAL_ISR(&timerMux);
     _mqttFlagTimerConfig = NEW_FLAG;
-    portEXIT_CRITICAL_ISR(&timerMux);
 }
 
 void envoyerMessage(String mqtt_topic, String data)

@@ -17,8 +17,10 @@ volatile bool _mqttFlagNouveauMessage = RESET_FLAG;
 volatile bool _mqttFlagTimerConfig = RESET_FLAG;
 hw_timer_t * timerConfig = NULL;
 
+static const char *DEBUG = "DEBUG : ";
+esp_mqtt_client_handle_t mqtt_client = nullptr;
+
 WiFiClient connexionWiFi;
-PubSubClient clientMQTT(connexionWiFi);
 JsonDocument jsonConfig;
 
 void interruptionWifiConnecter(WiFiEvent_t wifi_event, WiFiEventInfo_t wifi_info) {
@@ -50,7 +52,69 @@ void interuptionNouveauMessageMQTT(char *mqttTopic, byte *mqttPayload, unsigned 
     _mqttFlagNouveauMessage = NEW_FLAG;
     _mqttTopic = mqttTopic;
     _mqttMessage = message;
+
 }
+
+void onMQTTConnected(esp_mqtt_event_handle_t event) {
+  Serial.println("MQTT CONNECTÉ !");
+  // Ex : abonnement automatique
+  esp_mqtt_client_subscribe(event->client, "maison/salon/temp", 0);
+}
+
+void onMQTTDisconnected(esp_mqtt_event_handle_t event) {
+  Serial.println("MQTT DÉCONNECTÉ !");
+  // Tu peux aussi gérer une reconnexion manuelle si besoin
+}
+
+void onMQTTDataReceived(esp_mqtt_event_handle_t event) {
+  String topic = String(event->topic, event->topic_len);
+  String data = String(event->data, event->data_len);
+
+  Serial.printf("Reçu sur %s : %s\n", topic.c_str(), data.c_str());
+
+  // Exemple : traitement en fonction du topic
+  if (topic == "maison/salon/temp") {
+    Serial.println("Traitement de la température reçue...");
+  }
+}
+
+void onMQTTPublished(esp_mqtt_event_handle_t event) {
+  Serial.printf("Message publié (msg_id=%d)\n", event->msg_id);
+}
+
+void onMQTTError(esp_mqtt_event_handle_t event) {
+  Serial.println("Erreur MQTT !");
+}
+
+esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event) {
+  switch (event->event_id) {
+    case MQTT_EVENT_CONNECTED:
+      onMQTTConnected(event);
+      break;
+
+    case MQTT_EVENT_DISCONNECTED:
+      onMQTTDisconnected(event);
+      break;
+
+    case MQTT_EVENT_DATA:
+      onMQTTDataReceived(event);
+      break;
+
+    case MQTT_EVENT_PUBLISHED:
+      onMQTTPublished(event);
+      break;
+
+    case MQTT_EVENT_ERROR:
+      onMQTTError(event);
+      break;
+
+    default:
+      Serial.printf("🔔 Autre événement MQTT : %d\n", event->event_id);
+      break;
+  }
+  return ESP_OK;
+}
+
 
 void IRAM_ATTR interuptionEnvoieConfiguration() {
     _mqttFlagTimerConfig = NEW_FLAG;
@@ -58,7 +122,10 @@ void IRAM_ATTR interuptionEnvoieConfiguration() {
 
 void envoyerMessage(String mqtt_topic, String data)
 {
-    clientMQTT.publish(mqtt_topic.c_str(), data.c_str());
+    if (mqtt_client) {
+        int msg_id = esp_mqtt_client_publish(mqtt_client, mqtt_topic.c_str(), data.c_str(), 0, 1, 0);
+        ESP_LOGI(TAG, "Message publié: %s sur %s, msg_id=%d", message, topic, msg_id);
+    }
 }
 
 void envoieConfiguration(int univers, String adressIp, String adressMac, float puissanceWifi) {
@@ -73,11 +140,6 @@ void envoieConfiguration(int univers, String adressIp, String adressMac, float p
     serializeJson(jsonConfig, configModule);
 
     envoyerMessage(topicEnvoieConfig, configModule);
-}
-
-void Communication::receptionDataMQTT()
-{
-    clientMQTT.loop();
 }
 
 void Communication::initialiserWiFi(String nomModuleWifi, String ssid, String password)
@@ -113,24 +175,26 @@ void Communication::initialiserTimer() {
 
 void Communication::initialiserMQTT(String mqttBroker, uint16_t mqttPort, String mqttUsername, String mqttPassword)
 {
-    clientMQTT.setServer(mqttBroker.c_str(), mqttPort);
-    clientMQTT.setCallback(interuptionNouveauMessageMQTT);
+    String ipBroker = "mqtt://" + mqttBroker + "/";
 
-    Serial.print(F("MQTT : Tentative de connexion au broker..."));
-    if (clientMQTT.connect(_nomModuleWifi.c_str(), mqttUsername.c_str(), mqttPassword.c_str())) {
+    esp_mqtt_client_config_t mqtt_cfg = {
+        .uri = ipBroker.c_str(),
+        .event_handle = mqtt_event_handler_cb
+    };
 
-        Serial.printf("\r\nMQTT : Le client : %s est connecter au broker\r\n", _nomModuleWifi.c_str());
-        this->sinscrireAuxTopic();
-        this->initialiserTimer();
-        
-    }
+    mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
+    esp_mqtt_client_start(mqtt_client);
+
 }
 
 void Communication::sinscrireAuxTopic() {
 
     String topicLectureCanaux = (String)MQTT_TOPIC_RECEPTION_CANAUX + "/" + (String)_univers;
 
-    clientMQTT.subscribe(topicLectureCanaux.c_str());
+    if (mqtt_client) {
+        int msg_id = esp_mqtt_client_subscribe(mqtt_client, topicLectureCanaux.c_str(), 0);
+        ESP_LOGI(TAG, "Abonnement au topic: %s, msg_id=%d", topicLectureCanaux.c_str(), msg_id);
+    }
 
     Serial.print(F("Abonner au topic : "));
     Serial.println(topicLectureCanaux);

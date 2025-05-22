@@ -4,9 +4,11 @@
 #define MQTT_MAX_PACKET_SIZE 1024
 
 #include <Arduino.h>
-#include <PubSubClient.h>
-#include <WiFi.h>
+#include "esp_event.h"
+#include "esp_log.h"
+#include "mqtt_client.h"
 #include "esp_timer.h"
+#include "WiFi.h"
 #include <ArduinoJson.h>
 
 #define WIFI_MDP ""

@@ -23,7 +23,7 @@
 #define HAUTEUR_OLED 32
 #define OLED_RESET -1
 
-#define PIN_LED_ETAT 5
+#define PIN_LED_ETAT 18
 #define ALLUMER true
 #define ETEIN false
 #define TEMPS_CLIGNOTEMENT_LED 500

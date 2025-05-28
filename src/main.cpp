@@ -52,7 +52,7 @@ void initialiserMqtt() {
 
     if(etatWifi == CONNECTER && etatMqtt == DECONNECTER) 
     {
-      previousTime = currentTime;
+
       String mqttIp = sauvegarde.getIpMqtt();
       int mqttPort = sauvegarde.getPortMqtt();
       String mqttUser = sauvegarde.getUserMqtt();
@@ -67,6 +67,9 @@ void initialiserMqtt() {
 
       transmission.initialiserMQTT(mqttIp, mqttPort, mqttUser, mqttMdp);
     }
+
+
+    previousTime = currentTime;
 
   }
 

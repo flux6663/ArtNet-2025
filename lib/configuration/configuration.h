@@ -6,9 +6,10 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <Preferences.h>
+#include <nvs_flash.h>
 #include <SPIFFS.h>
 
-#define PIN_BOUTON_RESET 27
+#define PIN_BOUTON_RESET 19
 #define TEMPS_RESET_BOUTON 5000
 #define TEMPS_REBONS 210
 

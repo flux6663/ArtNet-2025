@@ -108,8 +108,7 @@ void Affichage::menuWifi(String wifiSsid, String adressIp, String qualiteLienWif
 
 void Affichage::menuMqtt(String nomModuleWifi, String mqttIp) {
   nomModuleWifi = "NOM : " + nomModuleWifi;
-  mqttIp = "IP broker : " + mqttIp;
-  this->ecrireLigne("Conf. MQTT : ", nomModuleWifi, mqttIp);
+  this->ecrireLigne("Conf. MQTT : ", nomModuleWifi, "IP broker : ", mqttIp);
 }
 
 void Affichage::menuUnivers(String univers) {
@@ -146,7 +145,7 @@ void ledAttenteConnexion() {
 
       previousTime = currentTime;
       etatLed = !etatLed;
-      digitalWrite(PIN_LED_ETAT, etatLed);
+      digitalWrite(PIN_LED_ETAT, !etatLed);
       
     }
 

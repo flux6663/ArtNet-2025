@@ -75,7 +75,7 @@ void Interface::arretUrgence()
     dmx_write(PORT_DMX, canauxReset, DMX_PACKET_SIZE);
     dmx_send_num(PORT_DMX, DMX_PACKET_SIZE);
     Serial.println("Arret d'urgence");
-    digitalWrite(PIN_DMX_LED_2, ETEIN);
+    digitalWrite(PIN_DMX_LED_2, !ETEIN);
     _execution = true;
   }
 }
@@ -84,7 +84,7 @@ void Interface::resetUrgence()
 {
   _arretUrgence = false;
   _execution = false;
-  digitalWrite(PIN_DMX_LED_2, ALLUMER);
+  digitalWrite(PIN_DMX_LED_2, !ALLUMER);
 }
 
 void Interface::ledTransmissionDonnerDMX() 
@@ -93,12 +93,12 @@ void Interface::ledTransmissionDonnerDMX()
     static long currentTime = 0;
     static unsigned long previousTime = 0;
 
-    digitalWrite(PIN_DMX_LED_1, ALLUMER);
+    digitalWrite(PIN_DMX_LED_1, !ALLUMER);
 
     currentTime = millis();
     if((currentTime - previousTime) > TEMPS_CLIGNOTEMENT_LED){
 
-      digitalWrite(PIN_DMX_LED_1, ETEIN);
+      digitalWrite(PIN_DMX_LED_1, !ETEIN);
       _transmissionDMX = PAS_DE_TRANSMISSION_DMX;
 
       previousTime = currentTime;

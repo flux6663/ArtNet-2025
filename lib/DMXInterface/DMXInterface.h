@@ -5,13 +5,13 @@
 #include <esp_dmx.h>
 #include <ArduinoJson.h>
 
-#define DMX_TX_PIN 16
-#define DMX_RX_PIN 23
-#define DMX_RTS_PIN 19
+#define DMX_TX_PIN 26
+#define DMX_RX_PIN 27
+#define DMX_RTS_PIN 32
 #define PORT_DMX DMX_NUM_1
 
-#define PIN_DMX_LED_1 17
-#define PIN_DMX_LED_2 18
+#define PIN_DMX_LED_1 16
+#define PIN_DMX_LED_2 17
 #define ALLUMER true
 #define ETEIN false
 #define TEMPS_CLIGNOTEMENT_LED 500

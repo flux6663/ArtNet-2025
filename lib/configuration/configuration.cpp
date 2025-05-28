@@ -1,6 +1,8 @@
 #include "configuration.h"
 #include <Arduino.h>
 #include <WiFi.h>
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
 
 volatile bool _flagResetModule = RESET_FLAG;
 
@@ -8,7 +10,7 @@ AsyncWebServer serverWeb(PORT_SERVEUR_WEB);
 Preferences memoire;
 
 void IRAM_ATTR appuisBoutonReset() {
-  static unsigned long tempsCourant = 0;
+  static unsigned long tempsCourant  = 0;
   static unsigned long nouveauTemps = 0;
 
   tempsCourant = millis();
@@ -35,9 +37,25 @@ void Configuration::initialiserBoutonReset() {
 
 void Configuration::initialiserMemoire() {
 
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
+
   this->initialiserBoutonReset();
 
-  if(!SPIFFS.begin())
+  esp_err_t err = nvs_flash_init();
+  if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+    Serial.println("NVS corrompu, effacement...");
+    ESP_ERROR_CHECK(nvs_flash_erase());
+    err = nvs_flash_init();
+  }
+
+  if (err != ESP_OK) {
+    Serial.printf("Erreur d'initialisation NVS : %s\n", esp_err_to_name(err));
+    return;
+  } else {
+    Serial.println("NVS initialisé avec succès.");
+  }
+
+  if(!SPIFFS.begin(true))
   {
     Serial.println(F("Erreur SPIFFS..."));
     return;
@@ -58,17 +76,24 @@ void Configuration::initialiserMemoire() {
 }
 
 void Configuration::lireMemoire() {
-  memoire.begin("config", true);
-  _ssidWifi = memoire.getString(CLE_MEMOIRE_WIFI_SSID, "");
-  _mdpWifi = memoire.getString(CLE_MEMOIRE_WIFI_MDP, "");
 
-  _ipMqtt = memoire.getString(CLE_MEMOIRE_MQTT_IP, "");
-  _portMqtt = memoire.getInt(CLE_MEMOIRE_MQTT_PORT, MQTT_PORT);
-  _userMqtt = memoire.getString(CLE_MEMOIRE_MQTT_USER, "");
-  _mdpMqtt = memoire.getString(CLE_MEMOIRE_MQTT_MDP, "");
+  if (memoire.begin("config", false))
+  {
+    Serial.println("Préférences ouvertes.");
 
-  _univers = memoire.getInt(CLE_MEMOIRE_UNIVERS, 0);
-  memoire.end();
+    _ssidWifi = memoire.getString(CLE_MEMOIRE_WIFI_SSID, "");
+    _mdpWifi = memoire.getString(CLE_MEMOIRE_WIFI_MDP, "");
+
+    _ipMqtt = memoire.getString(CLE_MEMOIRE_MQTT_IP, "");
+    _portMqtt = memoire.getInt(CLE_MEMOIRE_MQTT_PORT, MQTT_PORT);
+    _userMqtt = memoire.getString(CLE_MEMOIRE_MQTT_USER, "");
+    _mdpMqtt = memoire.getString(CLE_MEMOIRE_MQTT_MDP, "");
+
+    _univers = memoire.getInt(CLE_MEMOIRE_UNIVERS, 0);
+    memoire.end();
+  } else {
+    Serial.println("Erreur à l'ouverture des préférences !");
+  }
 
   if (_portMqtt == 0) _portMqtt = 1883;
   

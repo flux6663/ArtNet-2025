@@ -78,7 +78,7 @@ Fichier `platformio.ini` pour Seeed XIAO ESP32C3
 ```ini
 ; selectioner l'environement voulue
 [platformio]
-default_envs = seeed_xiao_esp32c3
+default_envs = esp32dev
 
 [common]
 monitor_speed = 115200
@@ -89,16 +89,6 @@ lib_deps_external =
 	esp32async/ESPAsyncWebServer@^3.7.4
 	esp32async/AsyncTCP @ ^3.3.8
 	adafruit/Adafruit SSD1306
-
-[env:seeed_xiao_esp32c3]
-platform = espressif32
-board = seeed_xiao_esp32c3
-board_build.mcu = esp32c3
-board_build.f_cpu = 160000000L
-framework = arduino 
-monitor_speed = ${common.monitor_speed}
-lib_deps = 
-	${common.lib_deps_external}
 
 [env:esp32dev]
 platform = espressif32

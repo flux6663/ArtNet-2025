@@ -6,8 +6,8 @@
 
 <table>
   <tr>
-    <td><img src="images/Regie eclairage.jpeg" alt="Régie d'éclairage" width="500"></td>
-    <!-- <td><img src="documentation/images/Magic_Air.png" alt="Images de carte Wi-Fi - DMX" width="210"></td> -->
+    <td><img src="images/Regie eclairage.jpeg" alt="Régie d'éclairage" width="400"></td>
+    <td><img src="images/scène.png" alt="scène" width="400"></td>
   </tr>
 </table>
 
@@ -118,13 +118,13 @@ Lors du démarage si il n'y a pas de valeur de configuré alors, le module se me
 
 1. Connecter vous au Wi-Fi du module :
 
-<img src="images/connexion wifi.png" alt="menu attente de configuration" width="300">
+<img src="images/connexion wifi.png" alt="wifi" width="300">
 
 2. Entrée l'adresse IP du module Wi-Fi DMX renseigner sur l'écran dans votre navigateur.
 
 3. Renseigné les valeurs de votre configuration : Wi-Fi, MQTT et numéro d'univer
 
-![alt text](image.png)
+<img src="images/page web.png" alt="page web" width="500">
 
 4. Aprés avoir renseigner les valeurs de la configuration, appuyer sur Connexion. Le module Wi-Fi DMX va alors redémarré.
 

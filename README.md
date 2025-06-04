@@ -79,7 +79,7 @@ Pour l'affichage, un ecran avec trois menu change toutes les 10s.
 
 #### Menu de configuration Wi-Fi
 
-<img src="images/Menu univers.png" alt="menu univer" width="200" />
+<img src="images/Menu Wifi.png" alt="menu univer" width="400" />
 
 | Menu | Élément                | Exemple de valeur         |
 |-----------|------------------------|----------------------------|
@@ -89,7 +89,7 @@ Pour l'affichage, un ecran avec trois menu change toutes les 10s.
 
 #### Menu de configuration MQTT
 
-<img src="images/Menu Mqtt.png" alt="Menu mqtt" width="200" />
+<img src="images/Menu Mqtt.png" alt="Menu mqtt" width="400"/>
 
 | Menu | Élément                | Exemple de valeur         |
 |-----------|------------------------|----------------------------|
@@ -98,7 +98,7 @@ Pour l'affichage, un ecran avec trois menu change toutes les 10s.
 
 #### Menu de configuration Univer
 
-<img src="images/Menu univers.png" alt="menu univer" width="200" />
+<img src="images/Menu univers.png" alt="menu univer" width="400" />
 
 | Menu | Élément                | Exemple de valeur         |
 |-----------|------------------------|----------------------------|

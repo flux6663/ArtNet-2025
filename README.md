@@ -1,4 +1,10 @@
 ![C++ Badge](https://img.shields.io/badge/C%2B%2B-00599C?logo=cplusplus&logoColor=fff&style=plastic)
+<a href="https://github.com/bts-lasalle-avignon-projets/plug-in-pool-2025">
+	<img src="https://img.shields.io/badge/Projet-BTS%20CIEL-darkviolet.svg" alt="Projet BTS CIEL"/>
+</a>
+<a href="https://github.com/bts-lasalle-avignon-projets/plug-in-pool-2025/releases">
+	<img src="https://img.shields.io/github/v/release/bts-lasalle-avignon-projets/plug-in-pool-2025" alt="release"/>
+</a>
 
 # ArtNet - Module Wi-Fi DMX
 
